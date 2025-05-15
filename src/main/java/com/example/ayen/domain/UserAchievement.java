@@ -7,7 +7,10 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "`UserAchievement`")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserAchievement {
 
     @Id
@@ -16,7 +19,7 @@ public class UserAchievement {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private AppUser user;
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "achievement_id")

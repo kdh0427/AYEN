@@ -22,8 +22,8 @@ public class AyenApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        User user1 = new User("user1@gmail.com", "usertoken1", "user1", User.SocialType.GOOGLE, 0, 0, 0, 0);
-        User user2 = new User("user2@gmail.com", "usertoken2", "user2", User.SocialType.GOOGLE, 0, 0, 0, 0);
+        User user1 = new User("user1@gmail.com", "1111","usertoken1", "user1", User.SocialType.GOOGLE, 0, 0, 0, 0);
+        User user2 = new User("user2@gmail.com", "2222","usertoken2", "user2", User.SocialType.GOOGLE, 0, 0, 0, 0);
         urepository.saveAll(Arrays.asList(user1, user2));
     }
 }
