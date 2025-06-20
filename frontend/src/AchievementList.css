@@ -6,13 +6,17 @@ body {
 
 .achievement-page {
     max-width: 100%;
-    padding: 16px;
     margin: 0 auto;
     background: white;
     box-sizing: border-box;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 16px 16px 60px;
 }
 
-/* 햄버거 메뉴 버튼 */
+/* 메뉴 버튼 */
 .menu-button {
     font-size: clamp(20px, 5vw, 28px);
     cursor: pointer;
@@ -35,10 +39,12 @@ body {
     color: #888;
     position: relative;
 }
+
 .tab.active {
     color: #000;
     font-weight: bold;
 }
+
 .tab.active::after {
     content: "";
     position: absolute;
