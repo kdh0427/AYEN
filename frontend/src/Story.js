@@ -1,13 +1,12 @@
 import React from "react";
-import "./App.css";
+import SideMenu from "./SideMenu";
+import "./Story.css";
 
-function App() {
+function Story() {
     return (
         <div className="container">
-            {/* 햄버거 메뉴 버튼 */}
-            <div className="menu-button">☰</div>
+            <SideMenu />
 
-            {/* 상단 상태바 */}
             <div className="status-bar-wrapper">
                 <div className="status-bar">
                     <div className="status-item">
@@ -43,10 +42,9 @@ function App() {
                 </div>
             </div>
 
-            {/* 본문 영역 */}
             <div className="content">
                 <div className="image-box">
-                    <div className="image-placeholder">[ 강아지 이미지 ]</div>
+                    <div className="image-placeholder"></div>
                 </div>
 
                 <div className="text-box">
@@ -57,15 +55,14 @@ function App() {
                 </div>
 
                 <div className="choices">
-                    <div className="choice red">돈 식량을 좀 나눠준다</div>
-                    <div className="choice green">야생의 친구 길들인다</div>
+                    <div className="choice">돈 식량을 좀 나눠준다</div>
+                    <div className="choice">야생의 친구 길들인다</div>
                     <div className="choice">지나간다</div>
                 </div>
 
                 <div className="page-number">– 83 –</div>
             </div>
 
-            {/* 하단 탭 메뉴 */}
             <div className="tab-bar">
                 <div className="tab">동출력</div>
                 <div className="tab">응변</div>
@@ -75,4 +72,4 @@ function App() {
     );
 }
 
-export default App;
+export default Story;
