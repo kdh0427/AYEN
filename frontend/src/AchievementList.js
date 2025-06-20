@@ -1,5 +1,6 @@
 import React from "react";
 import "./AchievementList.css";
+import SideMenu from "./SideMenu";
 
 const achievements = [
     { id: 1, title: "노 맨즈 랜드", achievedAt: "2025-06-18 14:20" },
@@ -13,7 +14,7 @@ const achievements = [
 function AchievementList() {
     return (
         <div className="achievement-page">
-            <div className="menu-button">☰</div>
+            <SideMenu />
 
             <div className="tabs">
                 <div className="tab">결말</div>
