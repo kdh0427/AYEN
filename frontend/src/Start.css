@@ -1,0 +1,43 @@
+body {
+    margin: 0;
+    font-family: 'Apple SD Gothic Neo', sans-serif;
+}
+
+.start-screen {
+    height: 100vh;
+    width: 100%;
+    background: linear-gradient(to bottom right, #fdfbfb, #ebedee);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.start-title {
+    font-size: clamp(24px, 6vw, 40px);
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.start-subtitle {
+    font-size: clamp(14px, 3vw, 18px);
+    color: #555;
+    margin-bottom: 40px;
+}
+
+.start-button {
+    background-color: #222;
+    color: white;
+    padding: 14px 28px;
+    font-size: clamp(14px, 3vw, 18px);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.start-button:hover {
+    background-color: #444;
+}

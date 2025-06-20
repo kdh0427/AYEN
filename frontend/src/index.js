@@ -1,13 +1,23 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
+import AchievementList from './AchievementList';
+import App from './App'
+import ScenarioList from './ScenarioList'
+import Start from './Start'
+import Signup from './Signup'
+import User from './User'
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    {/*<AchievementList />*/}
+    {/*<App />*/}
+    {/*<ScenarioList />*/}
+    {/*<Start />*/}
+    {/*<Signup />*/}
+    <User />
   </React.StrictMode>
 );
 
