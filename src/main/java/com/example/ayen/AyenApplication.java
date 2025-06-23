@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import java.util.Arrays;
 
 @SpringBootApplication
-public class AyenApplication implements CommandLineRunner {
+public class AyenApplication{
 
     private final UserRepository urepository;
     
@@ -20,10 +20,4 @@ public class AyenApplication implements CommandLineRunner {
         SpringApplication.run(AyenApplication.class, args);
     }
 
-    @Override
-    public void run(String... args) throws Exception {
-        User user1 = new User("user1@gmail.com", "1111","usertoken1", "user1", User.SocialType.GOOGLE, 0, 0, 0, 0);
-        User user2 = new User("user2@gmail.com", "2222","usertoken2", "user2", User.SocialType.GOOGLE, 0, 0, 0, 0);
-        urepository.saveAll(Arrays.asList(user1, user2));
-    }
 }
