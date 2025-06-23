@@ -1,0 +1,67 @@
+.rank-page {
+    padding: 20px;
+    width: 100%;
+    background: #f9f9f9;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+.rank-title {
+    font-size: clamp(20px, 5vw, 28px);
+    font-weight: bold;
+    margin-bottom: 4px;
+    text-align: center;
+}
+
+.rank-subtitle {
+    text-align: center;
+    font-size: clamp(12px, 2.5vw, 14px);
+    color: #777;
+    margin-bottom: 20px;
+}
+
+.rank-list {
+    list-style: none;
+    padding: 0 12px;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.rank-item {
+    background: white;
+    border-radius: 12px;
+    padding: 14px 16px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.rank-item.me {
+    background: #e8f5e9;
+    border: 1px solid #81c784;
+}
+
+.rank-position {
+    font-weight: bold;
+    font-size: 16px;
+    color: #444;
+    min-width: 32px;
+}
+
+.rank-name {
+    flex: 1;
+    font-weight: 600;
+    margin-left: 10px;
+}
+
+.rank-level,
+.rank-achieve {
+    font-size: 14px;
+    color: #666;
+    min-width: 70px;
+    text-align: right;
+}
