@@ -22,7 +22,7 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Character> characters = new ArrayList<>();
 
-    private String email, user_token, name, password;
+    private String email, user_token, name;
 
     @Enumerated(EnumType.STRING)
     private SocialType social_type;
@@ -38,7 +38,6 @@ public class User {
 
     public User(String email,String password , String user_token, String name, SocialType social_type, int level, int exp, int achievement_count, int scenario_play_count) {
         this.email = email;
-        this.password = password;
         this.user_token = user_token;
         this.name = name;
         this.social_type = social_type;
