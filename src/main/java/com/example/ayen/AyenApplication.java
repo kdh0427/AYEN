@@ -1,12 +1,8 @@
 package com.example.ayen;
 
-import com.example.ayen.domain.*;
-import com.example.ayen.domain.UserRepository;
-import org.springframework.boot.CommandLineRunner;
+import com.example.ayen.repository.UserRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import java.util.Arrays;
 
 @SpringBootApplication
 public class AyenApplication{

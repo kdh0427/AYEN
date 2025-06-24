@@ -1,16 +1,9 @@
 package com.example.ayen.controller;
 
-import com.example.ayen.domain.AccountCredentials;
 import com.example.ayen.service.JwtService;
 
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -24,7 +17,7 @@ public class LoginController {
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
     }
-
+/*
     // 로컬 로그인 엔드포인트
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AccountCredentials credentials) {
@@ -35,4 +28,9 @@ public class LoginController {
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .body("Login 성공");
     }
+    @GetMapping("/login/oauth2/code/kakao")
+    public String kakaoCallback(OAuth2AuthenticationToken auth) {
+        return "http://localhost:3000/sinario";
+    }
+*/
 }
