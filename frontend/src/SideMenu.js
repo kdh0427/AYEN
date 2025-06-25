@@ -1,14 +1,28 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./SideMenu.css";
 
 function SideMenu() {
+    const[userprofile, setProfile] = useState(null);
     const [isOpen, setIsOpen] = useState(false);
     const navigate = useNavigate();
 
     // 하드코딩 사용자 정보
-    const level = 12;
-    const nickname = "모험가";
+    /*const level = 12;
+    const nickname = "모험가";*/
+    useEffect(() => {
+        fetch("http://localhost:8080/user/profile", {
+          method: "GET",
+          credentials: "include",
+        })
+          .then((res) => {
+            if (!res.ok) throw new Error("사용자 정보 조회 실패");
+            return res.json();
+          })
+          .then((data) => setProfile(data))
+          .catch((err) => console.error(err));
+      }, []);
+
     const profileImageUrl = null;
 
     const closeMenu = () => setIsOpen(false);
@@ -57,8 +71,8 @@ function SideMenu() {
                         )}
                     </div>
                     <div className="profile-info">
-                        <div className="nickname">{nickname}</div>
-                        <div className="level">LV. {level}</div>
+                        <div className="nickname">{userprofile?.name}</div>
+                        <div className="level">LV. {userprofile?.level}</div>
                     </div>
                 </div>
 

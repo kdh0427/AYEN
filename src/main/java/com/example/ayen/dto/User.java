@@ -1,4 +1,4 @@
-package com.example.ayen.domain;
+package com.example.ayen.dto;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -36,7 +36,7 @@ public class User {
 
     private LocalDateTime created_at;
 
-    public User(String email,String password , String user_token, String name, SocialType social_type, int level, int exp, int achievement_count, int scenario_play_count) {
+    public User(String email, String user_token, String name, SocialType social_type, int level, int exp, int achievement_count, int scenario_play_count) {
         this.email = email;
         this.user_token = user_token;
         this.name = name;

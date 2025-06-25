@@ -1,4 +1,4 @@
-package com.example.ayen.domain;
+package com.example.ayen.dto;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
+@Table(name = "`user_character`")
 public class Character {
 
     @Id

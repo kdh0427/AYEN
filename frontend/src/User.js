@@ -7,12 +7,11 @@ function User() {
   const maxExp = 1500;
 
   useEffect(() => {
-    fetch("http://localhost:8080/api/user/me", {
+    fetch("http://localhost:8080/user/me", {
       method: "GET",
       credentials: "include",
     })
       .then((res) => {
-        console.log(res);
         if (!res.ok) throw new Error("사용자 정보 조회 실패");
         return res.json();
       })
