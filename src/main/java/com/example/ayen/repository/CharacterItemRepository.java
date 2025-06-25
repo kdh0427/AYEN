@@ -1,5 +1,6 @@
-package com.example.ayen.domain;
+package com.example.ayen.repository;
 
+import com.example.ayen.dto.CharacterItem;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 

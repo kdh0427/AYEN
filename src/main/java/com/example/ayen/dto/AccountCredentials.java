@@ -1,4 +1,4 @@
-package com.example.ayen.domain;
+package com.example.ayen.dto;
 
 public class AccountCredentials {
     private String username;
