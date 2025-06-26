@@ -24,7 +24,7 @@ function SideMenu() {
     };
 
     const handleAchievementClick = () => {
-        navigate("/achievements");
+        navigate("/records");
         closeMenu();
     };
 
@@ -68,8 +68,8 @@ function SideMenu() {
                 </div>
 
                 <div className="menu-section clickable" onClick={handleAchievementClick}>
-                    <h3>🏅 나의 업적</h3>
-                    <p>획득한 업적을 확인해 보세요.</p>
+                    <h3>🏅 나의 업적과 결말</h3>
+                    <p>획득한 업적과 결말을 확인해 보세요.</p>
                 </div>
 
                 <div className="menu-section clickable" onClick={handleRankClick}>

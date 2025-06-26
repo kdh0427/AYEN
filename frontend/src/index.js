@@ -7,7 +7,8 @@ import Story from './Story';
 import Start from './Start';
 import Signup from './Signup';
 import ScenarioList from './ScenarioList';
-import AchievementList from './AchievementList';
+import RecordList from './RecordList';
+import RecordDetail from "./RecordDetail";
 import User from './User';
 import Rank from "./Rank";
 import reportWebVitals from './reportWebVitals';
@@ -21,7 +22,8 @@ root.render(
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/Story" element={<Story />} />
                 <Route path="/scenarios" element={<ScenarioList />} />
-                <Route path="/achievements" element={<AchievementList />} />
+                <Route path="/records" element={<RecordList />} />
+                <Route path="/recordDetail" element={<RecordDetail />} />
                 <Route path="/user" element={<User />} />
                 <Route path="/rank" element={<Rank />} />
             </Routes>
