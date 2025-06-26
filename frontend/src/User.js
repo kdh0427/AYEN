@@ -7,7 +7,7 @@ function User() {
   const maxExp = 1500;
 
   useEffect(() => {
-    fetch("http://localhost:8080/user/me", {
+    fetch("http://localhost:8080/users/my", {
       method: "GET",
       credentials: "include",
     })
