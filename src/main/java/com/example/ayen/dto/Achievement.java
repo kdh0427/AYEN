@@ -4,7 +4,11 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
+@Table(name = "achievement")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Achievement {
 
     @Id
@@ -17,6 +21,6 @@ public class Achievement {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(columnDefinition = "JSON")
+    @Column(columnDefinition = "TEXT")
     private String condition;
 }

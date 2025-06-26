@@ -13,6 +13,8 @@ import org.springframework.security.oauth2.core.*;
 import org.springframework.security.oauth2.core.user.*;
 import org.springframework.security.oauth2.client.registration.*;
 import org.springframework.stereotype.*;
+
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -83,5 +85,9 @@ public class UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2U
         UserProfile dto = new UserProfile(user.getName(), user.getLevel());
 
         return ResponseEntity.ok(dto);
+    }
+
+    public List<User> getTop10UsersByAchievementCount() {
+        return userRepository.findTop10ByOrderByAchievementCountDesc();
     }
 }
