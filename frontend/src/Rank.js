@@ -1,16 +1,25 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./Rank.css";
 import SideMenu from "./SideMenu";
 
-const mockRanking = [
-    { id: 1, name: "용감한 고블린", level: 17, achievements: 9 },
-    { id: 2, name: "검은 늑대", level: 15, achievements: 11 },
-    { id: 3, name: "빛의 정령", level: 14, achievements: 7 },
-    { id: 4, name: "모험가", level: 12, achievements: 6 }, // 현재 유저
-    { id: 5, name: "푸른 달", level: 11, achievements: 4 },
-];
 
 function Rank() {
+    const[mockRanking, setRanking] = useState([]);
+    
+    useEffect(() => {
+        fetch("http://localhost:8080/users/rankings", {
+          method: "GET",
+          credentials: "include",
+        })
+          .then((res) => {
+            if (!res.ok) throw new Error("랭킹 조회 실패");
+            console.log(res);
+            return res.json();
+          })
+          .then((data) => setRanking(data))
+          .catch((err) => console.error(err));
+      }, []);
+
     return (
         <div className="rank-page">
             <SideMenu />

@@ -22,7 +22,7 @@ public class UserAchievement {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "achievement_id")
+    @JoinColumn(name = "achievement_id",  foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private Achievement achievement;
 
     @Column(name = "achieved_at")

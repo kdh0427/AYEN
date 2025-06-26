@@ -32,7 +32,7 @@ public class User {
         KAKAO,
         NAVER
     }
-    private int level, exp, achievement_count, scenario_play_count;
+    private int level, exp, achievementCount, scenario_play_count;
 
     private LocalDateTime created_at;
 
@@ -43,7 +43,7 @@ public class User {
         this.social_type = social_type;
         this.level = level;
         this.exp = exp;
-        this.achievement_count = achievement_count;
+        this.achievementCount = achievement_count;
         this.scenario_play_count = scenario_play_count;
         this.created_at = LocalDateTime.now();
     }
