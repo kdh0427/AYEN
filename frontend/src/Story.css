@@ -13,15 +13,15 @@ html, body {
 }
 
 /* 전체 컨테이너 */
-.container {
+.content {
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
-    width: 100%;
-    max-width: 100vw;
-    background: white;
-    overflow-x: hidden;
-    padding-bottom: 60px;
+    justify-content: space-between;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 20px;
+    min-height: calc(100vh - 250px);
 }
 
 /* 상단 상태바 */
@@ -118,16 +118,95 @@ html, body {
     bottom: 0;
     left: 0;
     width: 100%;
-    display: flex;
-    justify-content: space-around;
     background: #222;
     color: white;
-    padding: 8px 0;
     font-size: clamp(12px, 1.8vw, 14px);
     z-index: 100;
+    transition: max-height 0.3s ease;
+    display: flex;
+    flex-wrap: wrap;
+    padding: 8px 0;
+    overflow: hidden;
+}
+
+.tab-bar.collapsed {
+    max-height: 48px;
+    justify-content: center;
+}
+
+.tab-bar.expanded {
+    max-height: 200px;
+    overflow-y: auto;
+    justify-content: flex-start;
+    padding: 8px 8px;
 }
 
 .tab {
-    flex: 1;
+    flex: 0 0 33.3333%;
     text-align: center;
+    padding: 6px 4px;
+    white-space: nowrap;
+    box-sizing: border-box;
+}
+
+.item-tooltip-backdrop {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 200;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.item-tooltip {
+    background: white;
+    padding: 16px 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    min-width: 220px;
+    max-width: 80%;
+    font-size: 14px;
+    text-align: center;
+    animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.disabled-choice {
+    color: #d00;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.stat-change {
+    margin-left: 6px;
+    font-size: 0.8em;
+    font-weight: bold;
+    animation: fadeUp 0.8s ease-out;
+    position: relative;
+}
+
+.stat-change.up {
+    color: #28a745; /* 초록 */
+}
+.stat-change.down {
+    color: #dc3545; /* 빨강 */
+}
+
+@keyframes fadeUp {
+    0% {
+        opacity: 1;
+        top: 0;
+    }
+    100% {
+        opacity: 0;
+        top: -10px;
+    }
 }
