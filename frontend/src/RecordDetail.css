@@ -1,0 +1,54 @@
+.record-page {
+    background: #f9f9f9;
+    min-height: 100vh;
+    padding: 16px 16px 60px;
+    box-sizing: border-box;
+}
+
+.record-error {
+    text-align: center;
+    padding: 40px 0;
+    font-size: 16px;
+    color: #444;
+}
+
+.record-detail-body {
+    max-width: 720px;
+    margin: 12px auto 0;
+    padding: 0 4px;
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
+}
+
+.record-title {
+    font-size: clamp(22px, 5vw, 28px);
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.record-image-placeholder {
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    background: #ccc;
+    border-radius: 0;
+    margin-bottom: 24px;
+}
+
+.record-description {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #444;
+    margin-bottom: 32px;
+    padding: 0 8px;
+    text-align: left;
+}
+
+.record-meta {
+    font-size: 0.95rem;
+    color: #666;
+    line-height: 1.6;
+    text-align: left;
+    padding: 0 8px;
+}
