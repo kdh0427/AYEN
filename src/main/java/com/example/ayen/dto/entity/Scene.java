@@ -1,4 +1,4 @@
-package com.example.ayen.dto;
+package com.example.ayen.dto.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -15,9 +15,6 @@ public class Scene {
     @ManyToOne
     @JoinColumn(name = "scenario_id")
     private Scenario scenario;
-
-    @Column(length = 100)
-    private String title;
 
     @Column(columnDefinition = "TEXT")
     private String content;

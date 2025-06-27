@@ -1,6 +1,6 @@
 package com.example.ayen.repository;
 
-import com.example.ayen.dto.Scene;
+import com.example.ayen.dto.entity.Scene;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 

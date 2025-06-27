@@ -1,4 +1,4 @@
-package com.example.ayen.dto;
+package com.example.ayen.dto.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

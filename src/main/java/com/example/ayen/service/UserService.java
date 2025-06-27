@@ -1,17 +1,15 @@
 package com.example.ayen.service;
 
-import com.example.ayen.dto.User;
-import com.example.ayen.dto.User.SocialType;
-import com.example.ayen.dto.UserProfile;
+import com.example.ayen.dto.entity.User;
+import com.example.ayen.dto.entity.User.SocialType;
+import com.example.ayen.dto.response.UserProfile;
 import com.example.ayen.repository.UserRepository;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.client.userinfo.*;
-import org.springframework.security.oauth2.client.*;
 import org.springframework.security.oauth2.core.*;
 import org.springframework.security.oauth2.core.user.*;
-import org.springframework.security.oauth2.client.registration.*;
 import org.springframework.stereotype.*;
 
 import java.util.List;
@@ -90,4 +88,9 @@ public class UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2U
     public List<User> getTop10UsersByAchievementCount() {
         return userRepository.findTop10ByOrderByAchievementCountDesc();
     }
+
+    public Optional<User> findUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
 }

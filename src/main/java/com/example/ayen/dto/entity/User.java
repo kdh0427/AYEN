@@ -1,4 +1,4 @@
-package com.example.ayen.dto;
+package com.example.ayen.dto.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -16,11 +16,11 @@ import java.util.List;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Character> characters = new ArrayList<>();
+    private List<ScenarioPlay> scenarioPlays = new ArrayList<>();
 
     private String email, user_token, name;
 
@@ -32,19 +32,19 @@ public class User {
         KAKAO,
         NAVER
     }
-    private int level, exp, achievementCount, scenario_play_count;
+    private int level, exp, achievementCount, ending_count;
 
     private LocalDateTime created_at;
 
-    public User(String email, String user_token, String name, SocialType social_type, int level, int exp, int achievement_count, int scenario_play_count) {
+    public User(String email, String user_token, String name, SocialType social_type, int level, int exp, int achievementCount, int ending_count) {
         this.email = email;
         this.user_token = user_token;
         this.name = name;
         this.social_type = social_type;
         this.level = level;
         this.exp = exp;
-        this.achievementCount = achievement_count;
-        this.scenario_play_count = scenario_play_count;
+        this.achievementCount = achievementCount;
+        this.ending_count = ending_count;
         this.created_at = LocalDateTime.now();
     }
 }
