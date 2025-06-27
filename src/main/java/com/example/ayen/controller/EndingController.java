@@ -2,7 +2,6 @@ package com.example.ayen.controller;
 
 import com.example.ayen.dto.entity.User;
 import com.example.ayen.dto.entity.UserEnding;
-import com.example.ayen.dto.response.AchievementResponse;
 import com.example.ayen.dto.response.UserEndingResponse;
 import com.example.ayen.service.EndingService;
 import com.example.ayen.service.UserService;
