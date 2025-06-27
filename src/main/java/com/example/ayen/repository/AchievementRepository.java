@@ -1,6 +1,6 @@
 package com.example.ayen.repository;
 
-import com.example.ayen.dto.Achievement;
+import com.example.ayen.dto.entity.Achievement;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 

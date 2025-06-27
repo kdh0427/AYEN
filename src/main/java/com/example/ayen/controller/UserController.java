@@ -1,6 +1,6 @@
 package com.example.ayen.controller;
 
-import com.example.ayen.dto.User;
+import com.example.ayen.dto.entity.User;
 import com.example.ayen.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

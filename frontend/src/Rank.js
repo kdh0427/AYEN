@@ -13,7 +13,6 @@ function Rank() {
         })
           .then((res) => {
             if (!res.ok) throw new Error("랭킹 조회 실패");
-            console.log(res);
             return res.json();
           })
           .then((data) => setRanking(data))
@@ -31,7 +30,7 @@ function Rank() {
                         <span className="rank-position">#{index + 1}</span>
                         <span className="rank-name">{user.name}</span>
                         <span className="rank-level">LV. {user.level}</span>
-                        <span className="rank-achieve">🏅 {user.achievements}개</span>
+                        <span className="rank-achieve">🏅 {user.achievementCount}개</span>
                     </li>
                 ))}
             </ul>

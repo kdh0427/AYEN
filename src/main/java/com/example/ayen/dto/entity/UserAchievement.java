@@ -1,4 +1,4 @@
-package com.example.ayen.dto;
+package com.example.ayen.dto.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class UserAchievement {
 
     @Id
@@ -22,9 +21,15 @@ public class UserAchievement {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "achievement_id",  foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
+    @JoinColumn(name = "achievement_id", foreignKey = @ForeignKey(name = "fk_userachievement_achievement"))
     private Achievement achievement;
 
     @Column(name = "achieved_at")
     private LocalDateTime achievedAt;
+
+    public UserAchievement(User user, Achievement achievement, LocalDateTime achievedAt) {
+        this.user = user;
+        this.achievement = achievement;
+        this.achievedAt = achievedAt;
+    }
 }

@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./RecordList.css";
 import SideMenu from "./SideMenu";
 
+/*
 const achievements = [
     { id: 1, title: "노 맨즈 랜드", achievedAt: "2025-06-18 14:20" },
     { id: 2, title: "블랙 아웃", achievedAt: "2025-06-17 21:05" },
@@ -11,6 +12,7 @@ const achievements = [
     { id: 5, title: "잠실 갈리파", achievedAt: "2025-06-14 09:42" },
     { id: 6, title: "분노의 도로", achievedAt: "2025-06-12 22:10" },
 ];
+*/
 
 const endings = [
     { id: 1, title: "기억의 숲 - 해피엔딩", achievedAt: "2025-06-10 18:30" },
@@ -21,9 +23,41 @@ const endings = [
 
 function RecordList() {
     const [activeTab, setActiveTab] = useState("업적");
+    const [achievements, setAchievements] = useState([]);
+    const [endings, setEngings] = useState([]);
     const navigate = useNavigate();
 
     const listToShow = activeTab === "업적" ? achievements : endings;
+
+    useEffect(() => {
+        fetch("http://localhost:8080/achievements/me", {
+          method: "GET",
+          credentials: "include",
+        })
+          .then((res) => {
+            if (!res.ok) throw new Error("업적 조회 실패");
+            return res.json();
+          })
+          .then((data) => {
+            setAchievements(data || []);
+          })
+          .catch((err) => console.error(err));
+      }, []);
+
+      useEffect(() => {
+        fetch("http://localhost:8080/endings", {
+          method: "GET",
+          credentials: "include",
+        })
+          .then((res) => {
+            if (!res.ok) throw new Error("결말 조회 실패");
+            return res.json();
+          })
+          .then((data) => {
+            setEngings(data || []);
+          })
+          .catch((err) => console.error(err));
+      }, []);
 
     const handleClick = (item) => {
         const type = activeTab === "업적" ? "업적" : "결말";

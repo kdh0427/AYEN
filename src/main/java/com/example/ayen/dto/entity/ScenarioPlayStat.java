@@ -1,4 +1,4 @@
-package com.example.ayen.dto;
+package com.example.ayen.dto.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -9,20 +9,20 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class CharacterStat {
+public class ScenarioPlayStat {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToOne
     @JoinColumn(name = "character_id", unique = true)
-    private Character character;
+    private ScenarioPlay scenarioPlay;
 
     private int attack, defense, health, mana, intelligence, agility;
 
-    public CharacterStat(Character character, int attack, int defense, int health, int mana, int intelligence, int agility) {
-        this.character = character;
+    public ScenarioPlayStat(ScenarioPlay scenarioPlay, int attack, int defense, int health, int mana, int intelligence, int agility) {
+        this.scenarioPlay = scenarioPlay;
         this.attack = attack;
         this.defense = defense;
         this.health = health;
