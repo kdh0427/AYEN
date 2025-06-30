@@ -34,10 +34,13 @@ body {
 }
 
 .tab {
+    flex: 1;
+    text-align: center;
     padding: 10px 0;
     font-size: clamp(12px, 2.5vw, 16px);
     color: #888;
     position: relative;
+    cursor: pointer;
 }
 
 .tab.active {
@@ -53,6 +56,7 @@ body {
     right: 0;
     height: 2px;
     background: #000;
+    width: 100%;
 }
 
 /* 업적 카드 영역 */

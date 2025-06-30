@@ -1,24 +1,58 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./User.css";
 import SideMenu from "./SideMenu";
 
-const user = {
-    id: 1,
-    email: "ayen_user@gmail.com",
-    user_token: "ayen123456abcdef",
-    name: "모험가",
-    social_type: "google",
-    level: 5,
-    exp: 1280,
-    achievement_count: 7,
-    scenario_play_count: 4,
-    created_at: "2025-06-01T10:30:00",
-};
-
 const maxExp = 1500;
-const expPercent = Math.min((user.exp / maxExp) * 100, 100);
 
 function User({ onLogout }) {
+    const [user, setUser] = useState(null);
+    const [errorMsg, setErrorMsg] = useState("");
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        setLoading(true);
+        fetch("/api/users/my")
+            .then((res) => res.json())
+            .then((response) => {
+                if (response.code === 200) {
+                    setUser(response.data);
+                    setErrorMsg("");
+                } else if (response.code === 404) {
+                    setErrorMsg("사용자 정보를 찾을 수 없습니다.");
+                } else {
+                    setErrorMsg("사용자 정보를 불러오는 데 실패했습니다.");
+                }
+            })
+            .catch(() => {
+                setErrorMsg("서버와의 통신에 실패했습니다.");
+            })
+            .finally(() => setLoading(false));
+    }, []);
+
+    if (loading) {
+        return (
+            <div className="user-page-container">
+                <SideMenu />
+                <p className="loading-text">로딩 중...</p>
+            </div>
+        );
+    }
+
+    if (errorMsg) {
+        return (
+            <div className="user-page-container">
+                <SideMenu />
+                <p className="error-text">{errorMsg}</p>
+            </div>
+        );
+    }
+
+    if (!user) {
+        return null;
+    }
+
+    const expPercent = Math.min((user.exp / maxExp) * 100, 100);
+
     return (
         <div className="user-page-container">
             <SideMenu />
@@ -42,7 +76,7 @@ function User({ onLogout }) {
                 <div><strong>이메일:</strong> {user.email}</div>
                 <div><strong>가입일:</strong> {new Date(user.created_at).toLocaleDateString()}</div>
                 <div><strong>획득 업적:</strong> {user.achievement_count}개</div>
-                <div><strong>시나리오 진행:</strong> {user.scenario_play_count}개</div>
+                <div><strong>시나리오 진행:</strong> {user.ending_count}개</div>
             </div>
 
             <button className="logout-button" onClick={onLogout}>로그아웃</button>

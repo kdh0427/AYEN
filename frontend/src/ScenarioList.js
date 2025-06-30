@@ -1,22 +1,50 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./ScenarioList.css";
 import SideMenu from "./SideMenu";
 
-const scenarios = [
-    { id: 1, title: "기억의 숲", description: "깨어나보니 숲 한가운데. 잃어버린 기억을 찾아야 합니다.", imageUrl: null },
-    { id: 2, title: "도심 속의 늑대", description: "도시의 그림자 속, 당신은 진실을 추적합니다.", imageUrl: null },
-    { id: 3, title: "마지막 승객", description: "종착역을 향해 달리는 기차, 단 한 명만이 살아남습니다.", imageUrl: null },
-    { id: 4, title: "붉은 달의 전설", description: "붉은 달이 뜨는 밤, 저주받은 성으로 향합니다.", imageUrl: null },
-    { id: 5, title: "잊혀진 실험실", description: "문이 잠긴 연구소, 비밀이 잠들어 있습니다.", imageUrl: null }
-];
-
 function ScenarioList({ onMenuClick }) {
     const navigate = useNavigate();
+    const [scenarios, setScenarios] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [errorMsg, setErrorMsg] = useState("");
 
+    useEffect(() => {
+        const fetchScenarios = async () => {
+            try {
+                const res = await fetch("/api/scenarios");
+                const data = await res.json();
+
+                if (data.code === 200) {
+                    setScenarios(data.data);
+                } else if (data.code === 204) {
+                    setErrorMsg("시나리오가 존재하지 않습니다.");
+                } else {
+                    setErrorMsg("시나리오를 불러오는 데 실패했습니다.");
+                }
+            } catch (error) {
+                console.error("Error fetching scenarios:", error);
+                setErrorMsg("서버 오류가 발생했습니다.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchScenarios();
+    }, []);
+
+    // 클릭 시 첫 번째 장면으로 이동하도록 수정
     const handleScenarioClick = (scenarioId) => {
-        navigate("/story");
+        navigate(`/scenarios/${scenarioId}/scenes/1`);
     };
+
+    if (loading) {
+        return <div className="scenario-page">로딩 중...</div>;
+    }
+
+    if (errorMsg) {
+        return <div className="scenario-page">{errorMsg}</div>;
+    }
 
     return (
         <div className="scenario-page">
@@ -27,7 +55,20 @@ function ScenarioList({ onMenuClick }) {
             <div className="scenario-grid">
                 {scenarios.map((s) => (
                     <div key={s.id} className="scenario-card" onClick={() => handleScenarioClick(s.id)}>
-                        <div className="scenario-image" />
+                        <div className="scenario-image">
+                            {s.image_url ? (
+                                <img
+                                    src={s.image_url}
+                                    alt={s.title}
+                                    onError={(e) => {
+                                        e.target.onerror = null; // 무한 루프 방지
+                                        e.target.style.display = "none";
+                                        e.target.parentNode.querySelector(".image-placeholder").style.display = "flex";
+                                    }}
+                                />
+                            ) : null}
+                            <div className="image-placeholder" style={{ display: s.image_url ? "none" : "flex" }}></div>
+                        </div>
                         <div className="scenario-info">
                             <div className="scenario-name">{s.title}</div>
                             <div className="scenario-desc">{s.description}</div>
