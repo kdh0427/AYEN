@@ -18,7 +18,28 @@ function Rank() {
           .then((data) => setRanking(data))
           .catch((err) => console.error(err));
       }, []);
+/*
+        setLoading(true);
 
+        fetch("/api/rankings")
+            .then((res) => res.json())
+            .then((response) => {
+                if (response.code === 200) {
+                    const sortedData = response.data.sort((a, b) => b.level - a.level);
+                    setRankings(sortedData);
+                } else if (response.code === 204) {
+                    setRankings([]);
+                    setErrorMsg("데이터가 존재하지 않습니다.");
+                } else {
+                    setErrorMsg("랭킹 데이터를 불러오는 데 실패했습니다.");
+                }
+            })
+            .catch(() => {
+                setErrorMsg("서버와의 통신에 실패했습니다.");
+            })
+            .finally(() => setLoading(false));
+    }, []);
+*/
     return (
         <div className="rank-page">
             <SideMenu />
