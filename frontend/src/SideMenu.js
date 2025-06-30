@@ -14,7 +14,7 @@ function SideMenu() {
     const closeMenu = () => setIsOpen(false);
 
     const handleProfileClick = () => {
-        navigate("/user");
+        navigate("/user/my");
         closeMenu();
     };
 
@@ -29,7 +29,7 @@ function SideMenu() {
     };
 
     const handleRankClick = () => {
-        navigate("/rank");
+        navigate("/rankings");
         closeMenu();
     };
 
