@@ -3,29 +3,44 @@ import { useNavigate } from "react-router-dom";
 import "./RecordList.css";
 import SideMenu from "./SideMenu";
 
-/*
-const achievements = [
-    { id: 1, title: "노 맨즈 랜드", achievedAt: "2025-06-18 14:20" },
-    { id: 2, title: "블랙 아웃", achievedAt: "2025-06-17 21:05" },
-    { id: 3, title: "신인 작가 단편선", achievedAt: "2025-06-16 19:30" },
-    { id: 4, title: "미. 연. 시", achievedAt: "2025-06-15 10:15" },
-    { id: 5, title: "잠실 갈리파", achievedAt: "2025-06-14 09:42" },
-    { id: 6, title: "분노의 도로", achievedAt: "2025-06-12 22:10" },
-];
-*/
-
-const endings = [
-    { id: 1, title: "기억의 숲 - 해피엔딩", achievedAt: "2025-06-10 18:30" },
-    { id: 2, title: "기억의 숲 - 배드엔딩", achievedAt: "2025-06-09 15:45" },
-    { id: 3, title: "도심 속 늑대 - 생존", achievedAt: "2025-06-08 20:10" },
-    { id: 4, title: "도심 속 늑대 - 희생", achievedAt: "2025-06-07 13:55" },
-];
-
 function RecordList() {
     const [activeTab, setActiveTab] = useState("업적");
     const [achievements, setAchievements] = useState([]);
     const [endings, setEngings] = useState([]);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        setLoading(true);
+        const endpoint = activeTab === "업적" ? "/api/achievements" : "/api/endings";
+
+        fetch(endpoint)
+            .then((res) => res.json())
+            .then((response) => {
+                if (response.code === 200) {
+                    if (activeTab === "업적") {
+                        setAchievements(response.data);
+                    } else {
+                        setEndings(response.data);
+                    }
+                    setErrorMsg("");
+                } else if (response.code === 204) {
+                    if (activeTab === "업적") {
+                        setAchievements([]);
+                    } else {
+                        setEndings([]);
+                    }
+                    setErrorMsg("데이터가 존재하지 않습니다.");
+                } else {
+                    setErrorMsg("데이터를 불러오는 데 실패했습니다.");
+                }
+            })
+            .catch(() => {
+                setErrorMsg("서버와의 통신에 실패했습니다.");
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    }, [activeTab]);
 
     const listToShow = activeTab === "업적" ? achievements : endings;
 
@@ -92,20 +107,34 @@ function RecordList() {
                 </div>
             </div>
 
-            <div className="achievement-grid">
-                {listToShow.map((a) => (
-                    <div
-                        key={a.id}
-                        className="achievement-card"
-                        onClick={() => handleClick(a)}
-                        style={{ cursor: "pointer" }}
-                    >
-                        <div className="image-placeholder" />
-                        <div className="achievement-title">{a.title}</div>
-                        <div className="achievement-time">{a.achievedAt}</div>
-                    </div>
-                ))}
-            </div>
+            {loading ? (
+                <p className="loading-text">로딩 중...</p>
+            ) : errorMsg ? (
+                <p className="error-text">{errorMsg}</p>
+            ) : (
+                <div className="achievement-grid">
+                    {listToShow.map((a, idx) => (
+                        <div
+                            key={idx}
+                            className="achievement-card"
+                            onClick={() => handleClick(a)}
+                            style={{ cursor: "pointer" }}
+                        >
+                            {a.image_url ? (
+                                <img
+                                    className="image-placeholder"
+                                    src={a.image_url}
+                                    alt={a.title}
+                                />
+                            ) : (
+                                <div className="image-placeholder" />
+                            )}
+                            <div className="achievement-title">{a.title}</div>
+                            <div className="achievement-time">{a.achieved_at}</div>
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
     );
 }
