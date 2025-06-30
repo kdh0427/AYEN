@@ -23,8 +23,8 @@ public class ScenarioPlay {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "senario_id") //
-    private Scenario senario;
+    @JoinColumn(name = "scenario_id") //
+    private Scenario scenario;
 
     @OneToOne
     @JoinColumn(name = "current_scene_id")
@@ -38,9 +38,9 @@ public class ScenarioPlay {
 
     private LocalDateTime updated_at;
 
-    public ScenarioPlay(User user, Scenario senario, Scene scene, String chosen_role) {
+    public ScenarioPlay(User user, Scenario scenario, Scene scene, String chosen_role) {
         this.user = user;
-        this.senario = senario;
+        this.scenario = scenario;
         this.scene = scene;
         this.chosen_role = chosen_role;
         this.started_at = LocalDateTime.now();

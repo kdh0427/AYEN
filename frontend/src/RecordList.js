@@ -6,14 +6,17 @@ import SideMenu from "./SideMenu";
 function RecordList() {
     const [activeTab, setActiveTab] = useState("업적");
     const [achievements, setAchievements] = useState([]);
-    const [endings, setEngings] = useState([]);
+    const [endings, setEndings] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [errorMsg, setErrorMsg] = useState("");
+
     const navigate = useNavigate();
 
     useEffect(() => {
         setLoading(true);
-        const endpoint = activeTab === "업적" ? "/api/achievements" : "/api/endings";
+        const endpoint = activeTab === "업적" ? "http://localhost:8080/achievements/me" : "http://localhost:8080/endings";
 
-        fetch(endpoint)
+        fetch(endpoint, { credentials: "include" })
             .then((res) => res.json())
             .then((response) => {
                 if (response.code === 200) {
@@ -44,48 +47,28 @@ function RecordList() {
 
     const listToShow = activeTab === "업적" ? achievements : endings;
 
-    useEffect(() => {
-        fetch("http://localhost:8080/achievements/me", {
-          method: "GET",
-          credentials: "include",
-        })
-          .then((res) => {
-            if (!res.ok) throw new Error("업적 조회 실패");
-            return res.json();
-          })
-          .then((data) => {
-            setAchievements(data || []);
-          })
-          .catch((err) => console.error(err));
-      }, []);
+    const handleClick = async (item) => {
+        try {
+            const endpoint = activeTab === "업적"
+                ? `/api/achievements/${item.id}`
+                : `/api/endings/${item.id}`;
 
-      useEffect(() => {
-        fetch("http://localhost:8080/endings", {
-          method: "GET",
-          credentials: "include",
-        })
-          .then((res) => {
-            if (!res.ok) throw new Error("결말 조회 실패");
-            return res.json();
-          })
-          .then((data) => {
-            setEngings(data || []);
-          })
-          .catch((err) => console.error(err));
-      }, []);
+            const res = await fetch(endpoint);
+            const response = await res.json();
 
-    const handleClick = (item) => {
-        const type = activeTab === "업적" ? "업적" : "결말";
-        navigate("/recordDetail", {
-            state: {
-                ...item,
-                image_url: "https://cdn.ayen.app/images/achievement10.jpg", // 예시 이미지
-                description: type === "업적"
-                    ? "이 업적은 특별한 도전을 통해 달성되었습니다."
-                    : "이 결말은 시나리오의 특정 선택으로 도달한 엔딩입니다.",
-                exp: 100, // 예시 경험치
-            },
-        });
+            if (response.code === 200) {
+                navigate("/recordDetail", {
+                    state: {
+                        ...response.data,
+                        type: activeTab
+                    }
+                });
+            } else {
+                alert("상세 정보를 불러오지 못했습니다.");
+            }
+        } catch (error) {
+            alert("상세 정보를 불러오는 중 오류가 발생했습니다.");
+        }
     };
 
     return (

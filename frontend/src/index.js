@@ -33,17 +33,5 @@ function renderApp() {
     );
 }
 
-if (process.env.NODE_ENV === 'development') {
-    const { worker } = require('./mocks/browser');
-    worker.start().then(() => {
-        console.log('[MSW] worker started');
-        renderApp();
-    }).catch((err) => {
-        console.error('[MSW] worker start error', err);
-        renderApp(); // 실패해도 앱은 렌더
-    });
-} else {
-    renderApp();
-}
+renderApp();
 
-reportWebVitals();

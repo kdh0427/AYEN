@@ -4,28 +4,61 @@ import "./ScenarioList.css";
 import SideMenu from "./SideMenu";
 
 function ScenarioList({ onMenuClick }) {
-    const[scenarios, setScenario] = useState([]);
     const navigate = useNavigate();
+    const [scenarios, setScenarios] = useState([]);
     const [loading, setLoading] = useState(true);
     const [errorMsg, setErrorMsg] = useState("");
 
     useEffect(() => {
+        const fetchScenarios = async () => {
+            try {
+                const res = await fetch("http://localhost:8080/api/scenarios", {
+                    method: "GET",
+                    credentials: "include", // 쿠키 포함 (세션 유지)
+                });
+                const data = await res.json();
+                setScenarios(data);
+            } catch (error) {
+                console.error("Error fetching scenarios:", error);
+                setErrorMsg("서버 오류가 발생했습니다.");
+            } finally {
+                setLoading(false);
+            }
+        };
 
-        fetch("http://localhost:8080/scenarios", {
-          method: "GET",
-          credentials: "include",
-        })
-          .then((res) => {
-            if (!res.ok) throw new Error("시나리오 조회 실패");
-            return res.json();
-          })
-          .then((data) => setScenario(data))
-          .catch((err) => console.error(err));
-      }, []);
+        fetchScenarios();
+    }, []);
 
-    const handleScenarioClick = (scenarioId) => {
-        navigate(`/scenarios/${scenarioId}/scenes/1`);
-    };
+    const handleScenarioClick = async (scenarioId) => {
+        const confirmed = window.confirm("이 시나리오를 선택하시겠습니까?");
+        if (!confirmed) return;
+      
+        try {
+          // 템플릿 리터럴을 백틱으로 감싸야 변수 치환됨
+          const response = await fetch(`http://localhost:8080/api/scenarios/${scenarioId}/scenes`, {
+            method: "POST",
+            credentials: "include",
+          });
+      
+          console.log(response);
+          if (!response.ok) {
+            throw new Error("신 번호를 가져오는데 실패했습니다.");
+          }
+      
+          // 응답이 JSON이라고 가정
+          const data = await response.json();
+      
+          // 서버가 { lastSceneId: 3 } 이런 식으로 준다고 가정
+          const lastSceneId = data.lastSceneId || 1; // 기본값 1
+      
+          // 해당 마지막 신 번호로 네비게이트
+          navigate(`http://localhost:8080/scenarios/${scenarioId}/scenes/${lastSceneId}`);
+      
+        } catch (error) {
+          console.error(error);
+          alert("신 정보를 가져오는 중 오류가 발생했습니다.");
+        }
+      };      
 
     if (loading) {
         return <div className="scenario-page">로딩 중...</div>;

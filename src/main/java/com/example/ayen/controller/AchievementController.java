@@ -3,6 +3,7 @@ package com.example.ayen.controller;
 import com.example.ayen.dto.response.AchievementResponse;
 import com.example.ayen.dto.entity.User;
 import com.example.ayen.dto.entity.UserAchievement;
+import com.example.ayen.dto.response.ApiResponse;
 import com.example.ayen.service.AchievementService;
 import com.example.ayen.service.UserService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -29,7 +30,7 @@ public class AchievementController {
     }
 
     @GetMapping("/me")
-    public List<AchievementResponse> getAchievementsByCurrentUser(Authentication authentication) {
+    public ApiResponse<List<AchievementResponse>> getAchievementsByCurrentUser(Authentication authentication) {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         Map<String, Object> kakaoAccount = oAuth2User.getAttribute("kakao_account");
 
@@ -47,12 +48,14 @@ public class AchievementController {
 
         List<UserAchievement> userAchievements = aService.findByUser_Id(user.getId());
 
-        return userAchievements.stream()
+        List<AchievementResponse> responseList = userAchievements.stream()
                 .map(ua -> new AchievementResponse(
                         ua.getAchievement().getTitle(),
                         ua.getAchievement().getImage_url(),
-                        ua.getAchievedAt()// 실제 필드명에 맞게 변경
+                        ua.getAchievedAt()
                 ))
                 .collect(Collectors.toList());
+
+        return new ApiResponse<>(200, responseList);
     }
 }
