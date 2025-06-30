@@ -43,7 +43,7 @@ public class AyenApplication implements CommandLineRunner {
         arepository.save(new Achievement("미. 연. 시", "업적 미. 연. 시 달성", "이업적은 특별한 도전을 통해 달성되었습니다 ", "null", 100));
         arepository.save(new Achievement("잠실 갈리파", "업적 잠실 갈리파 달성", "이업적은 특별한 도전을 통해 달성되었습니다 ", "null", 100));
         arepository.save(new Achievement("분노의 도로", "업적 분노의 도로 달성", "이업적은 특별한 도전을 통해 달성되었습니다 ", "null", 100));
-*/
+
         var user = new com.example.ayen.dto.entity.User();
         user.setId(1L);
 
@@ -52,6 +52,6 @@ public class AyenApplication implements CommandLineRunner {
 
         var userAchievement = new UserAchievement(user, achievement, java.time.LocalDateTime.now());
         uarepository.save(userAchievement);
-
+*/
     }
 }

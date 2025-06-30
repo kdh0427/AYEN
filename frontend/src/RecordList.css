@@ -34,13 +34,10 @@ body {
 }
 
 .tab {
-    flex: 1;
-    text-align: center;
     padding: 10px 0;
     font-size: clamp(12px, 2.5vw, 16px);
     color: #888;
     position: relative;
-    cursor: pointer;
 }
 
 .tab.active {
@@ -56,15 +53,15 @@ body {
     right: 0;
     height: 2px;
     background: #000;
-    width: 100%;
 }
 
 /* 업적 카드 영역 */
 .achievement-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     gap: 16px;
     margin-top: 12px;
+    width: 100%;
 }
 
 .achievement-card {

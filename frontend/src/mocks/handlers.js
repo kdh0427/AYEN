@@ -1,3 +1,4 @@
+/*
 import { rest } from "msw";
 
 const userInfo = {
@@ -315,3 +316,4 @@ export const handlers = [
         return res(ctx.status(200), ctx.json({ code: 200, data: userInfo, msg: "200 ok" }));
     })
 ];
+*/

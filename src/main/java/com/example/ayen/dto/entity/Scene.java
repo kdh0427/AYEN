@@ -3,6 +3,8 @@ package com.example.ayen.dto.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "`Scene`")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
