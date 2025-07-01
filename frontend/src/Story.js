@@ -26,12 +26,16 @@ function Story() {
 
     const numericSceneId = Number(sceneId) || 1;
     const [currentSceneId, setCurrentSceneId] = useState(numericSceneId);
-
+     
     useEffect(() => {
+        const updatedSceneId = Number(sceneId) || 1; // ✅ 여기서 다시 계산
         setLoading(true);
-        fetch(`/api/scenarios/${scenarioId}/scenes/${currentSceneId}`)
-            .then(res => res.json())
-            .then(res => {
+        fetch(`http://localhost:8080/api/scenarios/${scenarioId}/scenes/${updatedSceneId}`, {
+            method: "GET",
+            credentials: "include",
+        })
+            .then((res) => res.json())
+            .then((res) => {
                 if (res.code === 200) {
                     const { data } = res;
                     setSceneData(data);
@@ -40,8 +44,8 @@ function Story() {
                 }
             })
             .finally(() => setLoading(false));
-    }, [scenarioId, currentSceneId]);
-
+    }, [scenarioId, sceneId]); // ✅ 이걸로 자동 실행
+    
     useEffect(() => {
         const handleClickOutside = (e) => {
             const tabWrapper = document.querySelector(".tab-bar-wrapper");
@@ -64,7 +68,7 @@ function Story() {
 
     const applyEffect = (effect) => {
         if (!effect) return;
-
+    
         const changes = {
             health: effect.health || 0,
             attack: effect.attack || 0,
@@ -73,58 +77,66 @@ function Story() {
             intelligence: effect.intelligence || 0,
             agility: effect.agility || 0
         };
-
-        setCurrentStats((prev) => ({
+    
+        setCurrentStats(prev => ({
             ...prev,
-            health: prev.health + changes.health,
             attack: prev.attack + changes.attack,
             defense: prev.defense + changes.defense,
+            health: prev.health + changes.health,
             mana: prev.mana + changes.mana,
             intelligence: prev.intelligence + changes.intelligence,
             agility: prev.agility + changes.agility
         }));
-
+    
         if (effect.addItem) {
-            setCurrentItems((prev) => [...prev, effect.addItem]);
+            setCurrentItems(prev => {
+                if (!prev.some(i => i.name === effect.addItem.name)) {
+                    return [...prev, effect.addItem];
+                }
+                return prev;
+            });
         }
-
+    
         setStatChanges(changes);
         setTimeout(() => setStatChanges({}), 1000);
-    };
+    };    
 
     const handleChoice = async (choice) => {
         if (!isConditionMet(choice.required_condition, currentStats, choice.required_item, currentItems)) return;
-
+    
+        const roleName = choice.description;
+        const numericSceneId = Number(sceneId) || 1;
+    
         if (choice.professionStats) {
             setCurrentStats(choice.professionStats);
             setCurrentItems(choice.professionItems);
+    
+            // 서버에 시작 정보 등록
+            await fetch(`http://localhost:8080/api/scenarios/${scenarioId}/scenes/${numericSceneId}?role=${encodeURIComponent(roleName)}`, {
+                method: "POST",
+                credentials: "include"
+            });
+    
+            // 선택 결과 전송
+            await fetch("/api/choose", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                  effect: choice.professionStats || {},
+                  item_changes: choice.professionItems || []
+                })
+            });
         } else {
             applyEffect(choice.effect);
         }
-
-        await fetch("/api/choose", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                effect: {
-                    health: choice.effect?.health || 0,
-                    attack: choice.effect?.attack || 0,
-                    defense: choice.effect?.defense || 0,
-                    mana: choice.effect?.mana || 0,
-                    intelligence: choice.effect?.intelligence || 0,
-                    agility: choice.effect?.agility || 0,
-                    item_changes: choice.effect?.addItem ? [choice.effect.addItem] : []
-                }
-            })
-        });
-
+    
         setPageNumber(prev => prev + 1);
-        setCurrentSceneId(choice.next_scene_id);
-        navigate(`/scenarios/${scenarioId}/scenes/${choice.next_scene_id}`);
+        navigate(`/scenarios/${scenarioId}/scenes/${choice.next_scene_id}`); // 이게 자동으로 useEffect를 트리거
     };
-
+    
+    
     if (loading || !sceneData) {
         return (
             <div className="container">

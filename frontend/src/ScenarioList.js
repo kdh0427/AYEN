@@ -52,7 +52,7 @@ function ScenarioList({ onMenuClick }) {
           const lastSceneId = data.lastSceneId || 1; // 기본값 1
       
           // 해당 마지막 신 번호로 네비게이트
-          navigate(`http://localhost:8080/scenarios/${scenarioId}/scenes/${lastSceneId}`);
+          navigate(`/scenarios/${scenarioId}/scenes/${lastSceneId}`);
       
         } catch (error) {
           console.error(error);
