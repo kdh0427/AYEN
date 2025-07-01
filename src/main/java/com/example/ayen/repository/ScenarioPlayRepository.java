@@ -9,5 +9,5 @@ import java.util.Optional;
 
 @RepositoryRestResource(exported = false)
 public interface ScenarioPlayRepository extends CrudRepository<ScenarioPlay, Long> {
-    Optional<ScenarioPlay> findByUser_EmailAndScenario_Id(String email, Long scenarioId);
+    Optional<ScenarioPlay> findByUser_IdAndScenario_Id(Long userId, Long scenarioId);
 }

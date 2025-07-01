@@ -1,12 +1,9 @@
 package com.example.ayen.service;
 
-import com.example.ayen.dto.entity.Choice;
-import com.example.ayen.dto.entity.Scene;
+import com.example.ayen.dto.entity.*;
 import com.example.ayen.dto.response.UserScene;
-import com.example.ayen.repository.ChoiceRepository;
-import com.example.ayen.repository.ScenarioPlayRepository;
+import com.example.ayen.repository.*;
 import com.example.ayen.dto.response.UserScene;
-import com.example.ayen.repository.SceneRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -25,16 +22,21 @@ public class SceneService {
     private final SceneRepository sceneRepository;
     private final ChoiceRepository choiceRepository;
     private final ObjectMapper objectMapper;
+    private final UserRepository userRepository;
+    private final ScenarioRepository scenarioRepository;
 
-    public SceneService(ScenarioPlayRepository scenarioPlayRepository, SceneRepository sceneRepository, ChoiceRepository choiceRepository, ObjectMapper objectMapper) {
+    public SceneService(ScenarioPlayRepository scenarioPlayRepository, SceneRepository sceneRepository, ChoiceRepository choiceRepository, ObjectMapper objectMapper
+    , UserRepository userRepository, ScenarioRepository scenarioRepository) {
         this.scenarioPlayRepository = scenarioPlayRepository;
         this.sceneRepository = sceneRepository;
         this.choiceRepository = choiceRepository;
         this.objectMapper = objectMapper;
+        this.userRepository = userRepository;
+        this.scenarioRepository = scenarioRepository;
     }
 
-    public Long findLastSceneIdByUserAndScenario(String username, Long scenarioId) {
-        return scenarioPlayRepository.findByUser_EmailAndScenario_Id(username, scenarioId)
+    public Long findLastSceneIdByUserAndScenario(Long userId, Long scenarioId) {
+        return scenarioPlayRepository.findByUser_IdAndScenario_Id(userId, scenarioId)
                 .map(scenarioPlay -> scenarioPlay.getScene().getId())
                 .orElse(null);
     }
@@ -70,5 +72,23 @@ public class SceneService {
 
         dto.setChoices(choiceDtos);
         return dto;
+    }
+
+    public void insertScenarioPlayIfNotExists(Long kakaoId, Long scenarioId, Long currentId, String role) {
+        Optional<ScenarioPlay> existing = scenarioPlayRepository.findByUser_IdAndScenario_Id(kakaoId, scenarioId);
+
+        if (existing.isEmpty()) {
+            User user = userRepository.findById(kakaoId)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            Scenario scenario = scenarioRepository.findById(scenarioId)
+                    .orElseThrow(() -> new RuntimeException("Scenario not found"));
+
+            Scene scene = sceneRepository.findById(currentId)
+                    .orElseThrow(() -> new RuntimeException("Scene not found"));
+
+            ScenarioPlay newPlay = new ScenarioPlay(user, scenario, scene, role);
+            scenarioPlayRepository.save(newPlay);
+        }
     }
 }
