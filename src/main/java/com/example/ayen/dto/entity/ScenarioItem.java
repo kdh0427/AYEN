@@ -16,8 +16,8 @@ public class ScenarioItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "scenario_play_id", unique = true)
+    @ManyToOne
+    @JoinColumn(name = "scenario_play_id")
     private ScenarioPlay scenarioPlay;
 
     @ManyToOne
@@ -26,8 +26,9 @@ public class ScenarioItem {
 
     private int quantity;
 
-    public ScenarioItem(ScenarioPlay scenarioPlay, int quantity) {
+    public ScenarioItem(ScenarioPlay scenarioPlay, Item item, int quantity) {
         this.scenarioPlay = scenarioPlay;
+        this.item = item;
         this.quantity = quantity;
     }
 }

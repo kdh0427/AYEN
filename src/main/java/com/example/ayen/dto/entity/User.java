@@ -1,5 +1,6 @@
 package com.example.ayen.dto.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,7 @@ public class User {
     private Long id;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<ScenarioPlay> scenarioPlays = new ArrayList<>();
 
     private String email, user_token, name;

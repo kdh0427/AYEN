@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Component
 public class SceneService {
@@ -36,9 +35,7 @@ public class SceneService {
     }
 
     public Long findLastSceneIdByUserAndScenario(Long userId, Long scenarioId) {
-        return scenarioPlayRepository.findByUser_IdAndScenario_Id(userId, scenarioId)
-                .map(scenarioPlay -> scenarioPlay.getScene().getId())
-                .orElse(null);
+        return scenarioPlayRepository.findCurrentSceneIdByUserIdAndScenarioIdAndIs_finished(userId, scenarioId);
     }
 
     public UserScene getSceneDto(Long scenarioId, Long sceneId) {
@@ -74,11 +71,17 @@ public class SceneService {
         return dto;
     }
 
-    public void insertScenarioPlayIfNotExists(Long kakaoId, Long scenarioId, Long currentId, String role) {
-        Optional<ScenarioPlay> existing = scenarioPlayRepository.findByUser_IdAndScenario_Id(kakaoId, scenarioId);
+    public void insertScenarioPlayIfNotExists(String email, Long scenarioId, Long currentId, String role) {
+        Long userid = userRepository.findIdByEmail(email);
+
+        if (userid == null) {
+            throw new RuntimeException("User ID not found for email: " + email);
+        }
+
+        Optional<ScenarioPlay> existing = scenarioPlayRepository.findByUser_IdAndScenario_Id(userid, scenarioId);
 
         if (existing.isEmpty()) {
-            User user = userRepository.findById(kakaoId)
+            User user = userRepository.findByEmail(email)
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
             Scenario scenario = scenarioRepository.findById(scenarioId)
@@ -90,5 +93,9 @@ public class SceneService {
             ScenarioPlay newPlay = new ScenarioPlay(user, scenario, scene, role);
             scenarioPlayRepository.save(newPlay);
         }
+    }
+
+    public Optional<Scene> findByCurrentScenarioId(Long currentScenarioId) {
+        return sceneRepository.findById(currentScenarioId);
     }
 }

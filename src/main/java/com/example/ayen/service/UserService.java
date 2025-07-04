@@ -27,15 +27,38 @@ public class UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2U
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        // 원래 로직 호출
         OAuth2User oAuth2User = new DefaultOAuth2UserService().loadUser(userRequest);
 
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
 
         if ("kakao".equals(registrationId)) {
             saveKakaoUser(oAuth2User);
+        } else if ("google".equals(registrationId)) {
+            saveGoogleUser(oAuth2User);
         }
-        return oAuth2User; // 👈 원래 객체 그대로 반환
+
+        return oAuth2User;
+    }
+
+    private void saveGoogleUser(OAuth2User oAuth2User) {
+        Map<String, Object> attributes = oAuth2User.getAttributes();
+
+        // 구글은 이메일, 이름이 보통 아래 키에 있음
+        String email = (String) attributes.get("email");
+        String name = (String) attributes.get("name");
+        String userToken = (String) attributes.get("sub"); // 구글 고유 ID
+
+        // 유저가 없으면 저장
+        userRepository.findByEmail(email).orElseGet(() -> {
+            User newUser = new User(
+                    email,
+                    userToken,
+                    name,
+                    SocialType.GOOGLE,  // SocialType enum에 GOOGLE 추가 필요
+                    1, 0, 0, 0
+            );
+            return userRepository.save(newUser);
+        });
     }
 
     private void saveKakaoUser(OAuth2User oAuth2User) {
@@ -93,4 +116,5 @@ public class UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2U
         return userRepository.findByEmail(email);
     }
 
+    public Long findIdByEmail(String email) {return userRepository.findIdByEmail(email);}
 }

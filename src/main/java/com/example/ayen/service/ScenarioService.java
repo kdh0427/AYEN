@@ -1,6 +1,7 @@
 package com.example.ayen.service;
 
 import com.example.ayen.dto.entity.Scenario;
+import com.example.ayen.dto.entity.Scene;
 import com.example.ayen.repository.ScenarioRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;

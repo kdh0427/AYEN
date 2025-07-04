@@ -26,7 +26,7 @@ public class ScenarioPlay {
     @JoinColumn(name = "scenario_id") //
     private Scenario scenario;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "current_scene_id")
     private Scene scene;
 

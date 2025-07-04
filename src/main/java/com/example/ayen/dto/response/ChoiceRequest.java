@@ -9,7 +9,7 @@ import java.util.List;
 @Setter
 public class ChoiceRequest {
     private Effect effect;
-    private List<Item> item_changes;
+    private Item item;
 
     @Getter
     @Setter
@@ -26,7 +26,7 @@ public class ChoiceRequest {
     @Setter
     public static class Item {
         private String name;
-        private int effect;
         private String description;
+        // getters, setters
     }
 }

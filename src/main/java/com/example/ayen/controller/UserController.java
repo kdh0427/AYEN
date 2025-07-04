@@ -18,7 +18,6 @@ import java.util.Map;
 public class UserController {
     private final UserService userService;
 
-    // 생성자 주입
     public UserController(UserService userService) {
         this.userService = userService;
     }
@@ -30,20 +29,35 @@ public class UserController {
         }
 
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-        Map<String, Object> kakaoAccount = oAuth2User.getAttribute("kakao_account");
 
-        if (kakaoAccount == null) {
-            return ResponseEntity.badRequest().body("kakao_account not found");
+        String registrationId = null;
+        if (authentication instanceof org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken) {
+            registrationId = ((org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId();
         }
 
-        String email = (String) kakaoAccount.get("email");
-        if (email == null) {
-            return ResponseEntity.badRequest().body("Email not found in kakao_account");
+        String email = null;
+
+        if ("kakao".equalsIgnoreCase(registrationId)) {
+            Map<String, Object> kakaoAccount = oAuth2User.getAttribute("kakao_account");
+            if (kakaoAccount == null) {
+                return ResponseEntity.badRequest().body("kakao_account not found");
+            }
+            email = (String) kakaoAccount.get("email");
+            if (email == null) {
+                return ResponseEntity.badRequest().body("Email not found in kakao_account");
+            }
+        } else if ("google".equalsIgnoreCase(registrationId)) {
+            email = oAuth2User.getAttribute("email");
+            if (email == null) {
+                return ResponseEntity.badRequest().body("Email not found in Google user attributes");
+            }
+        } else {
+            return ResponseEntity.badRequest().body("Unsupported social login provider");
         }
 
-        // 핵심 로직은 서비스로 위임
         return userService.getUserByEmail(email);
     }
+
 
     @GetMapping("/profile")
     public ResponseEntity<?> getUserProfile(Authentication authentication) {
@@ -52,15 +66,32 @@ public class UserController {
         }
 
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-        Map<String, Object> kakaoAccount = oAuth2User.getAttribute("kakao_account");
 
-        if (kakaoAccount == null) {
-            return ResponseEntity.badRequest().body("kakao_account not found");
+        // registrationId는 SecurityContext에서 꺼내거나, OAuth2AuthenticationToken에서 직접 가져올 수 있음
+        String registrationId = null;
+        if (authentication instanceof org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken) {
+            registrationId = ((org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId();
         }
 
-        String email = (String) kakaoAccount.get("email");
-        if (email == null) {
-            return ResponseEntity.badRequest().body("Email not found in kakao_account");
+        String email = null;
+
+        if ("kakao".equalsIgnoreCase(registrationId)) {
+            Map<String, Object> kakaoAccount = oAuth2User.getAttribute("kakao_account");
+            if (kakaoAccount == null) {
+                return ResponseEntity.badRequest().body("kakao_account not found");
+            }
+            email = (String) kakaoAccount.get("email");
+            if (email == null) {
+                return ResponseEntity.badRequest().body("Email not found in kakao_account");
+            }
+        } else if ("google".equalsIgnoreCase(registrationId)) {
+            // 구글은 최상위 속성에 email이 있음
+            email = oAuth2User.getAttribute("email");
+            if (email == null) {
+                return ResponseEntity.badRequest().body("Email not found in Google user attributes");
+            }
+        } else {
+            return ResponseEntity.badRequest().body("Unsupported social login provider");
         }
 
         return userService.getUserProfileByEmail(email);

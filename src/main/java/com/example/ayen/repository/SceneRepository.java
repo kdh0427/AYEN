@@ -10,5 +10,5 @@ import java.util.Optional;
 @RepositoryRestResource(exported = false)
 public interface SceneRepository extends CrudRepository<Scene, Long> {
     Optional<Scene> findByScenario_IdAndId(Long scenarioId, Long id);
-
+    Optional<Scene> findById(Long currentScenarioId);
 }

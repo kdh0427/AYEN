@@ -11,13 +11,18 @@ function Rank() {
           method: "GET",
           credentials: "include",
         })
-          .then((res) => {
-            if (!res.ok) throw new Error("랭킹 조회 실패");
-            return res.json();
+          .then((res) => res.text())
+          .then((text) => {
+            try {
+              const json = JSON.parse(text);
+              setRanking(json);
+            } catch (e) {
+              console.error("❌ JSON 파싱 오류:", e);
+            }
           })
-          .then((data) => setRanking(data))
-          .catch((err) => console.error(err));
+          .catch((err) => console.error("❌ 요청 실패:", err));
       }, []);
+      
 /*
         setLoading(true);
 
