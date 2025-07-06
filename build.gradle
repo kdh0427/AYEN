@@ -46,6 +46,8 @@ dependencies {
 
     // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-jackson
     implementation("io.jsonwebtoken:jjwt-jackson:0.12.6")
+
+    implementation 'io.github.cdimascio:java-dotenv:5.2.2'
 }
 
 tasks.named('test') {
