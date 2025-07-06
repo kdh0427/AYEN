@@ -1,0 +1,78 @@
+[33m6106a0d[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mchan[m[33m, [m[1;31morigin/chan[m[33m)[m HEAD@{0}: rebase (finish): returning to refs/heads/chan
+[33m6106a0d[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mchan[m[33m, [m[1;31morigin/chan[m[33m)[m HEAD@{1}: rebase (start): checkout 6106a0df0bec61d9af6290861c858eb1b1d4e767
+[33m1baaa84[m HEAD@{2}: rebase (finish): returning to refs/heads/chan
+[33m1baaa84[m HEAD@{3}: rebase (start): checkout 1baaa840acd219de9640f55ce1013eadc427ecc4
+[33m4023aa9[m HEAD@{4}: commit: Remove .env from git tracking
+[33m1baaa84[m HEAD@{5}: commit: env file
+[33m6106a0d[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mchan[m[33m, [m[1;31morigin/chan[m[33m)[m HEAD@{6}: rebase (finish): returning to refs/heads/chan
+[33m6106a0d[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mchan[m[33m, [m[1;31morigin/chan[m[33m)[m HEAD@{7}: rebase (start): checkout 6106a0df0bec61d9af6290861c858eb1b1d4e767
+[33m6dd871b[m HEAD@{8}: rebase (finish): returning to refs/heads/chan
+[33m6dd871b[m HEAD@{9}: rebase (start): checkout 6dd871be7330c08ae09de3c089a5716a0194d6cc
+[33m37c8b52[m HEAD@{10}: commit: env file
+[33m6dd871b[m HEAD@{11}: revert: Revert "env file"
+[33m67e1009[m HEAD@{12}: reset: moving to 67e10095506c3404f95cd6cc3959b90cc9ae7de0
+[33m67e1009[m HEAD@{13}: rebase (finish): returning to refs/heads/chan
+[33m67e1009[m HEAD@{14}: rebase (pick): env file
+[33m6106a0d[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mchan[m[33m, [m[1;31morigin/chan[m[33m)[m HEAD@{15}: rebase (start): checkout 6106a0df0bec61d9af6290861c858eb1b1d4e767
+[33m5b85bfb[m HEAD@{16}: rebase (finish): returning to refs/heads/chan
+[33m5b85bfb[m HEAD@{17}: rebase (pick): env file
+[33md2964f3[m HEAD@{18}: rebase (start): checkout d2964f3881415214a48c778e7123f8e22b6f32a7
+[33m3280c41[m HEAD@{19}: rebase (finish): returning to refs/heads/chan
+[33m3280c41[m HEAD@{20}: rebase (pick): env file
+[33me13ecdc[m HEAD@{21}: rebase (start): checkout e13ecdc6ad0b6351ff51d4fc67db4ad121846ada
+[33me95d540[m HEAD@{22}: rebase (finish): returning to refs/heads/chan
+[33me95d540[m HEAD@{23}: rebase (pick): env file
+[33m86f7887[m HEAD@{24}: rebase (start): checkout 86f788720fa89fa7fa5c4997662eace6b9ec1d75
+[33m6d36006[m HEAD@{25}: rebase (finish): returning to refs/heads/chan
+[33m6d36006[m HEAD@{26}: rebase (continue): env file
+[33m21e024e[m HEAD@{27}: rebase (start): checkout 21e024e673d22e4d95c50b273fcc6e8b52224819
+[33m0237efa[m HEAD@{28}: commit: env file
+[33m1ca98ef[m HEAD@{29}: commit: Scenario playing And Google Login
+[33m21e024e[m HEAD@{30}: commit: Scenario playing And Google Login
+[33m86f7887[m HEAD@{31}: commit: Scenario playing And Google Login
+[33me13ecdc[m HEAD@{32}: commit: Scenario playing And Google Login
+[33md2964f3[m HEAD@{33}: commit: Scenario playing And Google Login
+[33m6106a0d[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mchan[m[33m, [m[1;31morigin/chan[m[33m)[m HEAD@{34}: commit: Scene 2
+[33mc51e098[m HEAD@{35}: commit: Scene 1
+[33mbf7c593[m HEAD@{36}: commit (merge): Merge branch 'main' of https://github.com/kdh0427/AYEN into chan
+[33m8302ac2[m HEAD@{37}: commit: Initial Commit
+[33m8ee4848[m HEAD@{38}: commit (merge): Merge branch 'main' into chan
+[33m76a88ee[m HEAD@{39}: checkout: moving from main to chan
+[33m5242c04[m[33m ([m[1;32mmain[m[33m)[m HEAD@{40}: merge origin/main: Fast-forward
+[33m3279f3e[m HEAD@{41}: checkout: moving from chan to main
+[33m76a88ee[m HEAD@{42}: commit: User Ending
+[33mabf778b[m HEAD@{43}: pull --tags origin main: Merge made by the 'ort' strategy.
+[33mf558ad8[m HEAD@{44}: pull --tags origin chan: Fast-forward
+[33m0f73aff[m HEAD@{45}: commit: Scenario 1
+[33m1909e33[m HEAD@{46}: commit: User profile
+[33m8bdd5cc[m HEAD@{47}: commit: user
+[33m9192e21[m HEAD@{48}: commit: user
+[33m807f021[m HEAD@{49}: commit: kakao
+[33mce79daf[m HEAD@{50}: pull --tags origin main: Merge made by the 'ort' strategy.
+[33md571598[m[33m ([m[1;31morigin/seokm1n[m[33m)[m HEAD@{51}: checkout: moving from main to chan
+[33me0265b6[m HEAD@{52}: pull --tags origin main: Fast-forward
+[33m15d7f03[m HEAD@{53}: checkout: moving from chan to main
+[33md571598[m[33m ([m[1;31morigin/seokm1n[m[33m)[m HEAD@{54}: checkout: moving from main to chan
+[33m15d7f03[m HEAD@{55}: checkout: moving from chan to main
+[33md571598[m[33m ([m[1;31morigin/seokm1n[m[33m)[m HEAD@{56}: commit: Login
+[33m95e6c29[m HEAD@{57}: checkout: moving from main to chan
+[33m15d7f03[m HEAD@{58}: checkout: moving from chan to main
+[33m95e6c29[m HEAD@{59}: commit: user example
+[33m15d7f03[m HEAD@{60}: merge main: Fast-forward
+[33md51c97d[m HEAD@{61}: checkout: moving from main to chan
+[33m15d7f03[m HEAD@{62}: merge origin/main: Fast-forward
+[33mcbd30f0[m HEAD@{63}: checkout: moving from chan to main
+[33md51c97d[m HEAD@{64}: checkout: moving from main to chan
+[33mcbd30f0[m HEAD@{65}: merge origin/main: Fast-forward
+[33mee5f655[m HEAD@{66}: checkout: moving from chan to main
+[33md51c97d[m HEAD@{67}: commit: database 1
+[33mbfe33f0[m HEAD@{68}: commit: domain package
+[33mee5f655[m HEAD@{69}: checkout: moving from main to chan
+[33mee5f655[m HEAD@{70}: checkout: moving from chan to main
+[33mee5f655[m HEAD@{71}: merge origin/main: Fast-forward
+[33mf2950d9[m HEAD@{72}: checkout: moving from main to chan
+[33mee5f655[m HEAD@{73}: checkout: moving from chan to main
+[33mf2950d9[m HEAD@{74}: checkout: moving from main to chan
+[33mf2950d9[m HEAD@{75}: checkout: moving from chan to main
+[33mf2950d9[m HEAD@{76}: checkout: moving from main to chan
+[33mf2950d9[m HEAD@{77}: clone: from https://github.com/kdh0427/AYEN.git
