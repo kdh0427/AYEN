@@ -1,6 +1,7 @@
 package com.example.ayen.dto.response;
 
 import com.example.ayen.dto.entity.Choice;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -42,7 +43,9 @@ public class UserScene {
         private Integer mana;
         private Integer intelligence;
         private Integer agility;
-        private AddItemDto addItem;    // 추가 아이템 정보 등
+
+        @JsonDeserialize(using = SingleOrArrayDeserializer.class)
+        private List<AddItemDto> addItem;  // ✅ 단일 객체 → List로 변경
     }
 
     @Getter

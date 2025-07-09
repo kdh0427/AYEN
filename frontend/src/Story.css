@@ -71,8 +71,8 @@ html, body {
 
 .image-placeholder {
     width: 100%;
-    max-width: 300px;
-    aspect-ratio: 5/3;
+    max-width: 100px;
+    aspect-ratio: 1/1;
     background: #eee;
     border: 1px solid #ccc;
     color: #555;
@@ -82,6 +82,14 @@ html, body {
     font-style: italic;
     font-size: clamp(12px, 2vw, 14px);
 }
+
+.scene-image {
+    width: 100%;
+    max-width: 550px;
+    height: auto;
+    border-radius: 8px;
+    object-fit: contain;
+  }
 
 /* 설명 */
 .text-box {

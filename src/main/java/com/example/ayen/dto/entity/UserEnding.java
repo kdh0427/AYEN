@@ -26,4 +26,10 @@ public class UserEnding {
 
     @Column(name = "achieved_at")
     private LocalDateTime achievedAt;
+
+    public UserEnding(User user, Ending ending) {
+        this.user = user;
+        this.ending = ending;
+        achievedAt = LocalDateTime.now();
+    }
 }

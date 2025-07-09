@@ -15,6 +15,7 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,16 @@ public class ScenarioController {
         this.choiceService = choiceService;
     }
 
+    private String extractEmail(OAuth2User oAuth2User, String registrationId) {
+        if ("kakao".equals(registrationId)) {
+            Map<String, Object> kakaoAccount = oAuth2User.getAttribute("kakao_account");
+            return kakaoAccount != null ? (String) kakaoAccount.get("email") : null;
+        } else if ("google".equals(registrationId)) {
+            return oAuth2User.getAttribute("email");
+        }
+        return null; // 다른 provider도 추가 가능
+    }
+
     @GetMapping("/scenarios")
     public Iterable<Scenario> findScenarios() {
         return scenarioService.getAllScenarios();
@@ -42,21 +53,20 @@ public class ScenarioController {
     @PostMapping("/scenarios/{scenarioId}/scenes")
     public ResponseEntity<Map<String, Object>> getLastSceneId(
             @PathVariable Long scenarioId,
-            OAuth2AuthenticationToken authentication) {
+            Authentication authentication) {
 
         Map<String, Object> response = new HashMap<>();
 
         try {
             // ✅ 카카오 사용자 정보에서 이메일 추출
             OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-            Map<String, Object> kakaoAccount = oAuth2User.getAttribute("kakao_account");
+            String registrationId = ((OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId();
+            String email = extractEmail(oAuth2User, registrationId);
 
-            if (kakaoAccount == null || kakaoAccount.get("email") == null) {
-                response.put("error", "카카오 계정 이메일 정보 없음");
+            if (email == null) {
+                response.put("error", registrationId + " 계정 이메일 정보 없음");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
             }
-
-            String email = (String) kakaoAccount.get("email");
 
             // ✅ 이메일로 사용자 ID 조회
             Long userId = userService.findIdByEmail(email);
@@ -103,13 +113,12 @@ public class ScenarioController {
             String role = body.get("role");
 
             OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-            Map<String, Object> kakaoAccount = oAuth2User.getAttribute("kakao_account");
+            String registrationId = ((OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId();
+            String email = extractEmail(oAuth2User, registrationId);
 
-            if (kakaoAccount == null || kakaoAccount.get("email") == null) {
+            if (email == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
-
-            String email = (String) kakaoAccount.get("email");
 
             sceneService.insertScenarioPlayIfNotExists(email, scenarioId, currentId, role);
 
@@ -122,30 +131,37 @@ public class ScenarioController {
     }
 
     @PostMapping("/choose")
-        public ResponseEntity<?> handleChoice(
+    public ResponseEntity<?> handleChoice(
             @RequestBody ChoiceRequest request,
             Authentication authentication) {
 
         ChoiceRequest.Effect stats = request.getEffect();
-        ChoiceRequest.Item item = request.getItem();
-        String itemName = item != null ? item.getName() : null;
+        List<ChoiceRequest.Item> items = request.getItem();
+        List<String> itemNames = new ArrayList<>();
+
+        if (items != null) {
+            for (ChoiceRequest.Item item : items) {
+                itemNames.add(item.getName());
+            }
+        }
 
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-        Map<String, Object> kakaoAccount = oAuth2User.getAttribute("kakao_account");
+        String registrationId = ((OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId();
+        String email = extractEmail(oAuth2User, registrationId);
 
-        if (kakaoAccount == null || kakaoAccount.get("email") == null) {
+        if (email == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 
-        String email = (String) kakaoAccount.get("email");
         Long user_id = userService.findIdByEmail(email);
         Long id = choiceService.findActiveScenarioPlayIdByUserId(user_id);
 
         Long currentSceneId = choiceService.findCurrentSceneIdByUserId(user_id);
 
+        // 첫 시작
         if(currentSceneId == 1L) {
-            // 직업 선택 시 다른 테이블도 생성
-            choiceService.insertScenarioItemAndScenarioPlayStatIfNotExists(id, stats, itemName);
+            // 직업 선택 시 다른 테이블도 생성 (아이템 이름 리스트 전달)
+            choiceService.insertScenarioItemAndScenarioPlayStatIfNotExists(id, stats, itemNames);
         }
         // 테이블이 이미 있어서 update
         choiceService.updateCurrentScenarioIdById(id, currentSceneId);

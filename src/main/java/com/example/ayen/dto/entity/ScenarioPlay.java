@@ -34,7 +34,8 @@ public class ScenarioPlay {
 
     private LocalDateTime started_at, ending_at;
 
-    private boolean is_finished;
+    @Column(name = "is_finished") // DB 컬럼은 그대로 유지
+    private boolean isFinished;
 
     private LocalDateTime updated_at;
 
@@ -44,7 +45,7 @@ public class ScenarioPlay {
         this.scene = scene;
         this.chosen_role = chosen_role;
         this.started_at = LocalDateTime.now();
-        this.is_finished = false;
+        this.isFinished = false;
         this.updated_at = LocalDateTime.now();
     }
 

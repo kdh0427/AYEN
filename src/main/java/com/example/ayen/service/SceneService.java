@@ -78,7 +78,7 @@ public class SceneService {
             throw new RuntimeException("User ID not found for email: " + email);
         }
 
-        Optional<ScenarioPlay> existing = scenarioPlayRepository.findByUser_IdAndScenario_Id(userid, scenarioId);
+        Optional<ScenarioPlay> existing = scenarioPlayRepository.findByUser_IdAndScenario_IdAndIsFinishedFalse(userid, scenarioId);
 
         if (existing.isEmpty()) {
             User user = userRepository.findByEmail(email)
@@ -92,10 +92,10 @@ public class SceneService {
 
             ScenarioPlay newPlay = new ScenarioPlay(user, scenario, scene, role);
             scenarioPlayRepository.save(newPlay);
-        }
-    }
 
-    public Optional<Scene> findByCurrentScenarioId(Long currentScenarioId) {
-        return sceneRepository.findById(currentScenarioId);
+            int cnt = user.getScenario_play_count();
+            user.setScenario_play_count(++cnt);
+            userRepository.save(user);
+        }
     }
 }

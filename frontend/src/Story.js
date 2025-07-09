@@ -87,10 +87,11 @@ function Story() {
         };
     
         let newItems = prevItems;
-        if (effect.addItem) {
-            if (!prevItems.some(i => i.name === effect.addItem.name)) {
-                newItems = [...prevItems, effect.addItem];
-            }
+        if (effect.addItem && Array.isArray(effect.addItem)) {
+            const newUniqueItems = effect.addItem.filter(
+                item => !prevItems.some(i => i.name === item.name)
+            );
+            newItems = [...prevItems, ...newUniqueItems];
         }
     
         setStatChanges(changes);
@@ -130,13 +131,18 @@ function Story() {
             },
             body: JSON.stringify({
                 effect: newStats || {},
-                item: newItems.find(i => i.name === choice.effect.addItem?.name) || {}
+                item: choice.effect.addItem || []
             })
         });
-  
-        setPageNumber(prev => prev + 1);
-        const nextSceneId = choice.nextSceneId;
-        setCurrentSceneId(nextSceneId);
+
+        const updatedScene = await fetch(`http://localhost:8080/api/scenarios/${scenarioId}/scenes/${currentSceneId}`, {
+            method: "GET",
+            credentials: "include"
+        });
+        setPageNumber(prev => prev + 1)
+        const updatedData = await updatedScene.json();
+        const updatedChoice = updatedData.data.choices.find(c => c.description === choice.description);
+        const nextSceneId = updatedChoice?.nextSceneId ?? choice.nextSceneId;
         navigate(`/scenarios/${scenarioId}/scenes/${nextSceneId}`);
     };
     
@@ -149,7 +155,7 @@ function Story() {
         );
     }
 
-    const { content, image_url, choices } = sceneData;
+    const { content, imageUrl, choices } = sceneData;
 
     return (
         <div className="container">
@@ -186,7 +192,7 @@ function Story() {
                         <div className="image-placeholder">이미지</div>
                     ) : (
                         <img
-                            src={image_url}
+                            src={imageUrl}
                             alt="scene"
                             className="scene-image"
                             onError={() => setImageError(true)}

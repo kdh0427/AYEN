@@ -39,7 +39,6 @@ function ScenarioList({ onMenuClick }) {
             method: "POST",
             credentials: "include",
           });
-      
           if (!response.ok) {
             throw new Error("신 번호를 가져오는데 실패했습니다.");
           }
@@ -47,7 +46,6 @@ function ScenarioList({ onMenuClick }) {
           // 응답이 JSON이라고 가정
           const data = await response.json();
       
-          console.log(data);
           // 서버가 { lastSceneId: 3 } 이런 식으로 준다고 가정
           const lastSceneId = data.lastSceneId || 1; // 기본값 1
       

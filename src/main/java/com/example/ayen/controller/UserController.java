@@ -22,42 +22,42 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/my")
-    public ResponseEntity<?> getCurrentUser(Authentication authentication) {
-        if (authentication == null || !(authentication.getPrincipal() instanceof OAuth2User)) {
-            return ResponseEntity.status(401).body("Unauthorized");
+    private String extractEmail(OAuth2User oAuth2User, Authentication authentication) {
+        if (!(authentication instanceof org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken)) {
+            return null;
         }
 
-        OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-
-        String registrationId = null;
-        if (authentication instanceof org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken) {
-            registrationId = ((org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId();
-        }
-
-        String email = null;
+        String registrationId = ((org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken) authentication)
+                .getAuthorizedClientRegistrationId();
 
         if ("kakao".equalsIgnoreCase(registrationId)) {
             Map<String, Object> kakaoAccount = oAuth2User.getAttribute("kakao_account");
-            if (kakaoAccount == null) {
-                return ResponseEntity.badRequest().body("kakao_account not found");
-            }
-            email = (String) kakaoAccount.get("email");
-            if (email == null) {
-                return ResponseEntity.badRequest().body("Email not found in kakao_account");
+            if (kakaoAccount != null) {
+                return (String) kakaoAccount.get("email");
             }
         } else if ("google".equalsIgnoreCase(registrationId)) {
-            email = oAuth2User.getAttribute("email");
-            if (email == null) {
-                return ResponseEntity.badRequest().body("Email not found in Google user attributes");
-            }
-        } else {
-            return ResponseEntity.badRequest().body("Unsupported social login provider");
+            return oAuth2User.getAttribute("email");
         }
+
+        return null;
+    }
+
+    @GetMapping("/my")
+    public ResponseEntity<?> getCurrentUser(Authentication authentication) {
+        if (authentication == null || !(authentication.getPrincipal() instanceof OAuth2User)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+        }
+
+        OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
+        String email = extractEmail(oAuth2User, authentication);
+
+        if (email == null) {
+            return ResponseEntity.badRequest().body("Email not found or unsupported social login provider");
+        }
+        userService.settlementOfExperiencePoints(email);
 
         return userService.getUserByEmail(email);
     }
-
 
     @GetMapping("/profile")
     public ResponseEntity<?> getUserProfile(Authentication authentication) {
@@ -66,39 +66,13 @@ public class UserController {
         }
 
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
+        String email = extractEmail(oAuth2User, authentication);
 
-        // registrationId는 SecurityContext에서 꺼내거나, OAuth2AuthenticationToken에서 직접 가져올 수 있음
-        String registrationId = null;
-        if (authentication instanceof org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken) {
-            registrationId = ((org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId();
-        }
-
-        String email = null;
-
-        if ("kakao".equalsIgnoreCase(registrationId)) {
-            Map<String, Object> kakaoAccount = oAuth2User.getAttribute("kakao_account");
-            if (kakaoAccount == null) {
-                return ResponseEntity.badRequest().body("kakao_account not found");
-            }
-            email = (String) kakaoAccount.get("email");
-            if (email == null) {
-                return ResponseEntity.badRequest().body("Email not found in kakao_account");
-            }
-        } else if ("google".equalsIgnoreCase(registrationId)) {
-            // 구글은 최상위 속성에 email이 있음
-            email = oAuth2User.getAttribute("email");
-            if (email == null) {
-                return ResponseEntity.badRequest().body("Email not found in Google user attributes");
-            }
-        } else {
-            return ResponseEntity.badRequest().body("Unsupported social login provider");
+        if (email == null) {
+            return ResponseEntity.badRequest().body("Email not found or unsupported social login provider");
         }
 
         return userService.getUserProfileByEmail(email);
     }
 
-    @GetMapping("/rankings")
-    public List<User> getTopUsers() {
-        return userService.getTop10UsersByAchievementCount();
-    }
 }

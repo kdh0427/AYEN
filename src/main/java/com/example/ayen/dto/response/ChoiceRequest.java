@@ -9,7 +9,7 @@ import java.util.List;
 @Setter
 public class ChoiceRequest {
     private Effect effect;
-    private Item item;
+    private List<Item> item;
 
     @Getter
     @Setter

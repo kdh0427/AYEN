@@ -34,11 +34,11 @@ public class User {
         KAKAO,
         NAVER
     }
-    private int level, exp, achievementCount, ending_count;
+    private int level, exp, achievementCount, scenario_play_count;
 
     private LocalDateTime created_at;
 
-    public User(String email, String user_token, String name, SocialType social_type, int level, int exp, int achievementCount, int ending_count) {
+    public User(String email, String user_token, String name, SocialType social_type, int level, int exp, int achievementCount, int scenario_play_count) {
         this.email = email;
         this.user_token = user_token;
         this.name = name;
@@ -46,7 +46,7 @@ public class User {
         this.level = level;
         this.exp = exp;
         this.achievementCount = achievementCount;
-        this.ending_count = ending_count;
+        this.scenario_play_count = scenario_play_count;
         this.created_at = LocalDateTime.now();
     }
 }

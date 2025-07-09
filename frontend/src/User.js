@@ -93,7 +93,7 @@ function User() {
           <strong>가입일:</strong> {new Date(user.created_at).toLocaleDateString()}
         </div>
         <div>
-          <strong>획득 업적:</strong> {user.achievement_count}개
+          <strong>획득 업적:</strong> {user.achievementCount}개
         </div>
         <div>
           <strong>시나리오 진행:</strong> {user.scenario_play_count}개

@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface ScenarioPlayStatRepository extends CrudRepository<ScenarioPlayStat, Long> {
 
     Optional<ScenarioPlayStat> findByScenarioPlay(ScenarioPlay scenarioPlay);
+    Optional<ScenarioPlayStat> findById(Long id);
 }

@@ -55,8 +55,19 @@ body {
 
 .scenario-image {
     width: 100%;
-    aspect-ratio: 3/2;
+    aspect-ratio: 1;
     background: #ccc;
+    overflow: hidden;
+    border-radius: 12px; /* optional */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.scenario-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 또는 contain */
 }
 
 .scenario-info {
