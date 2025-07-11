@@ -8,6 +8,9 @@ function ScenarioList({ onMenuClick }) {
     const [scenarios, setScenarios] = useState([]);
     const [loading, setLoading] = useState(true);
     const [errorMsg, setErrorMsg] = useState("");
+    const [achievementQueue, setAchievementQueue] = useState([]);
+    const [currentAchievement, setCurrentAchievement] = useState(null);
+
 
     useEffect(() => {
         const fetchScenarios = async () => {
@@ -26,9 +29,41 @@ function ScenarioList({ onMenuClick }) {
             }
         };
 
+        const checkAchievements = async () => {
+            try {
+                const res = await fetch("http://localhost:8080/achievements/checkAchieve", {
+                    method: "GET",
+                    credentials: "include",
+                });
+                if (!res.ok) throw new Error("업적 확인 실패");
+    
+                const json = await res.json();
+                if (json.data && json.data.length > 0) {
+                    setAchievementQueue(json.data); // 업적 목록을 큐에 추가
+                }
+            } catch (error) {
+                console.error("업적 확인 중 오류:", error);
+            }
+        };
+    
         fetchScenarios();
+        checkAchievements();
     }, []);
 
+    useEffect(() => {
+        if (!currentAchievement && achievementQueue.length > 0) {
+            const next = achievementQueue[0];
+            setCurrentAchievement(next);
+    
+            const timer = setTimeout(() => {
+                setCurrentAchievement(null);
+                setAchievementQueue((prev) => prev.slice(1)); // 큐에서 제거
+            }, 3000); // 3초 후 다음 업적으로 넘어감
+    
+            return () => clearTimeout(timer);
+        }
+    }, [achievementQueue, currentAchievement]);
+    
     const handleScenarioClick = async (scenarioId) => {
         const confirmed = window.confirm("이 시나리오를 선택하시겠습니까?");
         if (!confirmed) return;
@@ -96,6 +131,15 @@ function ScenarioList({ onMenuClick }) {
                     </div>
                 ))}
             </div>
+            {currentAchievement && (
+                <div className="snackbar">
+                    <img src={currentAchievement.image_url} alt={currentAchievement.title} className="snackbar-image" />
+                    <div className="snackbar-text">
+                        <strong>🏆 {currentAchievement.title}</strong><br />
+                        {currentAchievement.description}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

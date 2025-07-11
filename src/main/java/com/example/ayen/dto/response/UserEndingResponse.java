@@ -11,12 +11,12 @@ public class UserEndingResponse {
     private Long id;
     private String Title;
     private String Url;
-    private LocalDateTime achievedAt;
+    private LocalDateTime achieved_at;
 
-    public UserEndingResponse(Long id, String Title, String Url, LocalDateTime achievedAt) {
+    public UserEndingResponse(Long id, String Title, String Url, LocalDateTime achieved_at) {
         this.id = id;
         this.Title = Title;
         this.Url = Url;
-        this.achievedAt = achievedAt;
+        this.achieved_at = achieved_at;
     }
 }

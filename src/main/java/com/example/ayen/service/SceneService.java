@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 public class SceneService {
@@ -23,15 +24,17 @@ public class SceneService {
     private final ObjectMapper objectMapper;
     private final UserRepository userRepository;
     private final ScenarioRepository scenarioRepository;
+    private final ScenarioItemRepository scenarioItemRepository;
 
     public SceneService(ScenarioPlayRepository scenarioPlayRepository, SceneRepository sceneRepository, ChoiceRepository choiceRepository, ObjectMapper objectMapper
-    , UserRepository userRepository, ScenarioRepository scenarioRepository) {
+    , UserRepository userRepository, ScenarioRepository scenarioRepository, ScenarioItemRepository scenarioItemRepository) {
         this.scenarioPlayRepository = scenarioPlayRepository;
         this.sceneRepository = sceneRepository;
         this.choiceRepository = choiceRepository;
         this.objectMapper = objectMapper;
         this.userRepository = userRepository;
         this.scenarioRepository = scenarioRepository;
+        this.scenarioItemRepository = scenarioItemRepository;
     }
 
     public Long findLastSceneIdByUserAndScenario(Long userId, Long scenarioId) {
@@ -52,6 +55,7 @@ public class SceneService {
 
         for (Choice c : choices) {
             UserScene.ChoiceDto cd = new UserScene.ChoiceDto();
+            cd.setRequiredItem(c.getRequiredCondition());
             cd.setNextSceneId(c.getNextScene().getId());
             cd.setDescription(c.getDescription());
 
@@ -98,4 +102,12 @@ public class SceneService {
             userRepository.save(user);
         }
     }
+
+    public List<String> getItemNamesByUser(Long userId) {
+        List<ScenarioItem> items = scenarioItemRepository.findByScenarioPlayId(userId);
+        return items.stream()
+                .map(userItem -> userItem.getItem().getName())
+                .collect(Collectors.toList());
+    }
+
 }

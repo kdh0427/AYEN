@@ -11,4 +11,5 @@ import java.util.Optional;
 @RepositoryRestResource(exported = false)
 public interface EndingRepository extends CrudRepository<Ending, Long> {
     Optional<Ending> findBySceneId(Long id);
+    Optional<Ending> findById(Long id);
 }

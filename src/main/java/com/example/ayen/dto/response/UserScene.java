@@ -29,6 +29,7 @@ public class UserScene {
     public static class ChoiceDto {
         private Long nextSceneId;
         private String description;
+        private String requiredItem;
         private EffectDto effect;      // JSON 컬럼 파싱 결과
     }
 

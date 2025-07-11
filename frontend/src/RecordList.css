@@ -65,25 +65,41 @@ body {
 }
 
 .achievement-card {
+    width: 100%;
     background: #fff;
     border-radius: 8px;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
     overflow: hidden;
+    text-align: center;
+    font-size: clamp(12px, 1.8vw, 14px);
     display: flex;
     flex-direction: column;
-    text-align: left;
-    font-size: clamp(12px, 1.8vw, 14px);
 }
 
 .image-placeholder {
+    position: relative;
     width: 100%;
-    aspect-ratio: 3/2;
-    background: #ccc;
+    padding-top: 100%; /* 정사각형 비율 유지 */
+    background-color: #ccc;
+    overflow: hidden;
+}
+
+.image-placeholder img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    display: block;
 }
 
 .achievement-title {
     padding: 8px 10px 0;
     font-weight: 600;
+    color: #222;
+    word-break: break-word;
 }
 
 .achievement-time {

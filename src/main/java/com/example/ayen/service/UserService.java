@@ -117,17 +117,4 @@ public class UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2U
     }
 
     public Long findIdByEmail(String email) {return userRepository.findIdByEmail(email);}
-
-    public void settlementOfExperiencePoints(String email){
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found for email: " + email));
-
-        int uexp = user.getExp();
-        int level = uexp / 1500 + 1;
-        int exp =  uexp % 1500;
-
-        user.setExp(exp);
-        user.setLevel(level);
-        userRepository.save(user);
-    }
 }

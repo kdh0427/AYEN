@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 public class ChoiceService {
@@ -24,9 +25,13 @@ public class ChoiceService {
     private final UserEndingRepository userEndingRepository;
     private final ChoiceRepository choiceRepository;
     private final UserRepository userRepository;
+    private final UserAchievementRepository userAchievementRepository;
+    private final AchievementRepository achievementRepository;
 
     public ChoiceService(ScenarioPlayRepository scenarioPlayRepository, ScenarioItemRepository scenarioItemRepository, ScenarioPlayStatRepository scenarioPlayStatRepository,
-                         ItemRepository itemRepository, SceneRepository sceneRepository, BossRepository bossRepository, EndingRepository endingRepository, UserEndingRepository userEndingRepository, ChoiceRepository choiceRepository, UserRepository userRepository) {
+                         ItemRepository itemRepository, SceneRepository sceneRepository, BossRepository bossRepository, EndingRepository endingRepository,
+                         UserEndingRepository userEndingRepository, ChoiceRepository choiceRepository, UserRepository userRepository,
+                         UserAchievementRepository userAchievementRepository, AchievementRepository achievementRepository) {
         this.scenarioPlayRepository = scenarioPlayRepository;
         this.scenarioItemRepository = scenarioItemRepository;
         this.scenarioPlayStatRepository = scenarioPlayStatRepository;
@@ -37,6 +42,8 @@ public class ChoiceService {
         this.userEndingRepository = userEndingRepository;
         this.choiceRepository = choiceRepository;
         this.userRepository = userRepository;
+        this.userAchievementRepository = userAchievementRepository;
+        this.achievementRepository = achievementRepository;
     }
 
     public Long findActiveScenarioPlayIdByUserId(Long userId) {
@@ -95,19 +102,55 @@ public class ChoiceService {
         }
     }
 
+    public boolean hasRequiredItem(Long scenarioPlayId, String requiredItemName) {
+        List<ScenarioItem> scenarioItems = scenarioItemRepository.findByScenarioPlayId(scenarioPlayId);
+
+        List<String> itemNames = scenarioItems.stream()
+                .map(item -> item.getItem().getName())
+                .collect(Collectors.toList());
+
+        System.out.println("사용자의 보유 아이템: " + itemNames);
+        System.out.println("필요한 아이템: " + requiredItemName);
+
+        return itemNames.stream()
+                .anyMatch(name -> name.trim().equalsIgnoreCase(requiredItemName.trim()));
+
+    }
+
     @Transactional
-    public void updateCurrentScenarioIdById(Long id, Long currentSceneId) {
+    public void updateCurrentScenarioIdById(Long id, Long currentSceneId, List<String> itemNames, ChoiceRequest.Effect stats) { // 시나리오 id, 최근 씬 id
         ScenarioPlay scenarioPlay = scenarioPlayRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("ScenarioPlay not found"));
 
         Scene currentScene = sceneRepository.findById(currentSceneId)
                 .orElseThrow(() -> new RuntimeException("Scene not found"));
 
+        ScenarioPlayStat scenarioPlayStat = scenarioPlayStatRepository.findByScenarioPlay_Id(id)
+                .orElseThrow(() -> new RuntimeException("ScenarioPlayStat not found"));
+
+        scenarioPlayStat = setStats(scenarioPlayStat, stats);
+        scenarioPlayStatRepository.save(scenarioPlayStat);
+
+        // 아이템 추가
+        if (itemNames != null && !itemNames.isEmpty()) {
+            for (String itemName : itemNames) {
+                Optional<Item> optionalItem = itemRepository.findIdByName(itemName);
+                if (optionalItem.isPresent()) {
+                    Item item = optionalItem.get();
+                    Optional<ScenarioItem> existing = scenarioItemRepository.findByScenarioPlayAndItem(scenarioPlay, item);
+                    if (existing.isEmpty()) {
+                        ScenarioItem scenarioItem = new ScenarioItem(scenarioPlay, item, 1);
+                        scenarioItemRepository.save(scenarioItem);
+                    }
+                }
+            }
+        }
+        
         // 엔딩 Scene인 경우
         if (Boolean.TRUE.equals(currentScene.getIsEnding())) {
-            scenarioPlay.setEnding_at(LocalDateTime.now());
-            scenarioPlay.setUpdated_at(LocalDateTime.now());
-            scenarioPlay.setFinished(true);
+            scenarioPlay.setEnding_at(LocalDateTime.now()); // 엔딩날짜
+            scenarioPlay.setUpdated_at(LocalDateTime.now()); // 최근 업데이트 날짜
+            scenarioPlay.setFinished(true); // 엔딩 여부
 
             // 조건 분기로 엔딩 Scene 지정 (해피/노말/배드)
             Scene endingScene = conditionBranch(scenarioPlay.getId(), scenarioPlay.getScenario());
@@ -115,18 +158,49 @@ public class ChoiceService {
 
             Ending ending = endingRepository.findBySceneId(endingScene.getId())
                     .orElseThrow(() -> new RuntimeException("Ending not found"));
-            UserEnding userEnding = new UserEnding(scenarioPlay.getUser(), ending);
 
+            // 엔딩 -> 유저 엔딩에 추가
+            // 엔딩에 관한 업적만 추가
+            UserEnding userEnding = new UserEnding(scenarioPlay.getUser(), ending);
+            userEndingRepository.save(userEnding);
+            
             Choice choice = choiceRepository.findBySceneId(currentSceneId)
                     .orElseThrow(() -> new RuntimeException("Choice not found"));
             choice.setNextScene(endingScene);
 
+            // 유저 경험치 및 레벨 계산
             User expuser = scenarioPlay.getUser();
-            expuser.setExp(ending.getExp());
+            int totalExp = expuser.getLevel() * 1500 + expuser.getExp() + ending.getExp();
+            int newLevel = totalExp / 1500;
+            int newExp = totalExp % 1500;
 
+            expuser.setLevel(newLevel);
+            expuser.setExp(newExp);
+
+            // 업적 id 가져오기
+            EndingType endingType = ending.getEndingType();
+            Achievement achievement = achievementRepository.findByConditionValues(scenarioPlay.getChosen_role(), endingType.name());
+
+            // 엔딩 업적 없다면 엔딩 업적 추가
+            if (achievement != null) {
+                boolean exists = userAchievementRepository.existsByUser_IdAndAchievement_Id(
+                        userEnding.getUser().getId(),
+                        achievement.getId()
+                );
+
+                if (!exists) {
+                    UserAchievement userAchievement = new UserAchievement(scenarioPlay.getUser(), achievement);
+                    userAchievementRepository.save(userAchievement);
+
+                    // 업적 카운트 + 1
+                    int cnt = expuser.getAchievementCount();
+                    expuser.setAchievementCount(++cnt);
+                }
+            }
+
+            // 정보 업데이트
             userRepository.save(expuser);
             choiceRepository.save(choice);
-            userEndingRepository.save(userEnding);
             scenarioPlayRepository.save(scenarioPlay);
         } else{
             Long nextSceneId = currentSceneId + 1;
@@ -143,7 +217,7 @@ public class ChoiceService {
 
     // 결말 분기
     public Scene conditionBranch(Long playId, Scenario scenario) {
-        ScenarioPlayStat stat = scenarioPlayStatRepository.findById(playId)
+        ScenarioPlayStat stat = scenarioPlayStatRepository.findByScenarioPlayId(playId)
                 .orElseThrow(() -> new RuntimeException("Stat not found"));
 
         Boss boss = bossRepository.findByScenarioId(scenario.getId())
@@ -173,5 +247,17 @@ public class ChoiceService {
             return sceneRepository.findByScenarioAndContent(scenario, "배드엔딩")
                     .orElseThrow(() -> new RuntimeException("배드엔딩 없음"));
         }
+    }
+
+    // stat 적용
+    public ScenarioPlayStat setStats(ScenarioPlayStat stat, ChoiceRequest.Effect stats) {
+        stat.setAttack(stats.getAttack());
+        stat.setDefense(stats.getDefense());
+        stat.setHealth(stats.getHealth());
+        stat.setIntelligence(stats.getIntelligence());
+        stat.setMana(stats.getMana());
+        stat.setAgility(stats.getAgility());
+
+        return stat;
     }
 }

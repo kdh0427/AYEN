@@ -20,7 +20,7 @@ public class Achievement {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "`condition`", columnDefinition = "TEXT")
+    @Column(name = "`condition`", columnDefinition = "JSON")
     private String condition;
 
     private String image_url;

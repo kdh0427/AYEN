@@ -10,8 +10,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -54,7 +56,6 @@ public class UserController {
         if (email == null) {
             return ResponseEntity.badRequest().body("Email not found or unsupported social login provider");
         }
-        userService.settlementOfExperiencePoints(email);
 
         return userService.getUserByEmail(email);
     }
@@ -74,5 +75,33 @@ public class UserController {
 
         return userService.getUserProfileByEmail(email);
     }
+
+    @GetMapping("/rankings")
+    public ResponseEntity<?> getTopUsers(Authentication authentication) {
+        String email = null;
+        Long userId = null;  // 로그인한 사용자 ID
+
+        if (authentication != null && authentication.getPrincipal() instanceof OAuth2User) {
+            OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
+            email = extractEmail(oAuth2User, authentication);
+
+            if (email != null) {
+                Optional<User> optionalUser = userService.findUserByEmail(email);
+                if (optionalUser.isPresent()) {
+                    userId = optionalUser.get().getId();
+                }
+            }
+        }
+
+        List<User> rankings = userService.getTop10UsersByAchievementCount();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("currentUserEmail", email);
+        response.put("currentUserId", userId);
+        response.put("rankings", rankings);
+
+        return ResponseEntity.ok(response);
+    }
+
 
 }

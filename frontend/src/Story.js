@@ -17,7 +17,7 @@ function Story() {
     const [currentStats, setCurrentStats] = useState({
         attack: 0,
         defense: 0,
-        health: 100,
+        health: 50,
         mana: 0,
         intelligence: 0,
         agility: 0
@@ -25,7 +25,6 @@ function Story() {
     const [currentItems, setCurrentItems] = useState([]);
 
     const numericSceneId = Number(sceneId) || 1;
-    const [currentSceneId, setCurrentSceneId] = useState(numericSceneId);
      
     useEffect(() => {
         setLoading(true);
@@ -102,12 +101,12 @@ function Story() {
 
     const handleChoice = async (choice) => {
         if (!isConditionMet(choice.required_condition, currentStats, choice.required_item, currentItems)) return;
-    
+
         const roleName = choice.description;
     
         // 서버에 시작 정보 등록
         if(numericSceneId === 1){
-            await fetch(`http://localhost:8080/api/scenarios/${scenarioId}/scenes/${currentSceneId}`, {
+            await fetch(`http://localhost:8080/api/scenarios/${scenarioId}/scenes/${numericSceneId}`, {
                 method: "POST",
                 credentials: "include",
                 headers: {
@@ -116,6 +115,49 @@ function Story() {
                 body: JSON.stringify({ role: roleName }) // ← body로 전송
             });
         }
+
+        let requiredItem = choice.requiredItem;
+        if (typeof requiredItem === "string") {
+            try {
+                requiredItem = JSON.parse(requiredItem);  // 문자열이면 객체로 변환
+            } catch (e) {
+                console.error("requiredItem JSON 파싱 실패", e);
+                requiredItem = {}; // fallback
+            }
+        }
+
+        try {
+            const response = await fetch("http://localhost:8080/api/itemCheck", {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    requiredItem: requiredItem
+                })
+            });
+        
+            if (!response.ok) {
+                // 서버 응답을 JSON으로 파싱 (가능할 경우)
+                let result = {};
+                try {
+                    result = await response.json();
+                } catch (e) {
+                    console.warn("응답 JSON 파싱 실패", e);
+                }
+        
+                // 사용자에게만 부드럽게 안내
+                alert(result.message || "이 선택지는 사용할 수 없습니다.");
+                return;
+            }
+        
+            // 정상 처리...
+        } catch (error) {
+            // 네트워크 등 기타 에러만 콘솔에 출력
+            console.error("요청 중 오류 발생:", error);
+            alert("요청에 실패했습니다. 네트워크 상태를 확인하세요.");
+        }        
 
         const { newStats, newItems } = applyEffect(choice.effect, currentStats, currentItems);
 
@@ -135,14 +177,20 @@ function Story() {
             })
         });
 
-        const updatedScene = await fetch(`http://localhost:8080/api/scenarios/${scenarioId}/scenes/${currentSceneId}`, {
+        const updatedScene = await fetch(`http://localhost:8080/api/scenarios/${scenarioId}/scenes/${numericSceneId}`, {
             method: "GET",
             credentials: "include"
         });
+        
         setPageNumber(prev => prev + 1)
         const updatedData = await updatedScene.json();
         const updatedChoice = updatedData.data.choices.find(c => c.description === choice.description);
         const nextSceneId = updatedChoice?.nextSceneId ?? choice.nextSceneId;
+
+        if (nextSceneId === 1) {
+            navigate('/scenarios');  // 메인 화면 경로로 변경
+            return;  // 더 이상 진행하지 않도록 return
+        }
         navigate(`/scenarios/${scenarioId}/scenes/${nextSceneId}`);
     };
     

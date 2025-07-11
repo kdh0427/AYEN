@@ -6,6 +6,7 @@ import com.example.ayen.repository.UserAchievementRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class AchievementService {
@@ -21,4 +22,7 @@ public class AchievementService {
         return useraRepository.findByUser_Id(userId);
     }
 
+    public Boolean findByUser_idAndAchievement_Id(Long userId, Long achievementId) {
+        return useraRepository.existsByUser_IdAndAchievement_Id(userId, achievementId);
+    }
 }

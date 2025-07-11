@@ -158,14 +158,51 @@ public class ScenarioController {
 
         Long currentSceneId = choiceService.findCurrentSceneIdByUserId(user_id);
 
+        if (currentSceneId == null) {
+            // 엔딩이 끝나고 재시작이거나 기록이 없을 경우
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build(); // 204
+        }
+
         // 첫 시작
         if(currentSceneId == 1L) {
             // 직업 선택 시 다른 테이블도 생성 (아이템 이름 리스트 전달)
             choiceService.insertScenarioItemAndScenarioPlayStatIfNotExists(id, stats, itemNames);
         }
         // 테이블이 이미 있어서 update
-        choiceService.updateCurrentScenarioIdById(id, currentSceneId);
+        choiceService.updateCurrentScenarioIdById(id, currentSceneId, itemNames, stats);
 
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/itemCheck")
+    public ResponseEntity<?> itemCheck(
+            @RequestBody ChoiceRequest request,
+            Authentication authentication) {
+
+        OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
+        String registrationId = ((OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId();
+        String email = extractEmail(oAuth2User, registrationId);
+
+        if (email == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        Long user_id = userService.findIdByEmail(email);
+        Long id = choiceService.findActiveScenarioPlayIdByUserId(user_id);
+
+        Map<String, String> requiredItemMap = request.getRequiredItem();
+        if (requiredItemMap != null && requiredItemMap.containsKey("item")) {
+            String requiredItem = requiredItemMap.get("item");
+
+            boolean hasItem = choiceService.hasRequiredItem(id, requiredItem);
+
+            if (!hasItem) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body(Map.of("message", "필요한 아이템이 없습니다."));
+            }
+        }
+
+        return ResponseEntity.ok().build();
+    }
+
 }

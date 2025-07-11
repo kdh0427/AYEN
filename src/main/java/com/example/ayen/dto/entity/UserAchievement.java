@@ -27,9 +27,12 @@ public class UserAchievement {
     @Column(name = "achieved_at")
     private LocalDateTime achievedAt;
 
-    public UserAchievement(User user, Achievement achievement, LocalDateTime achievedAt) {
+    private Boolean checked;
+
+    public UserAchievement(User user, Achievement achievement) {
         this.user = user;
         this.achievement = achievement;
-        this.achievedAt = achievedAt;
+        this.achievedAt = LocalDateTime.now();
+        this.checked = false;
     }
 }

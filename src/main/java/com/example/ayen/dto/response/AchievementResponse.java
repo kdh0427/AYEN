@@ -8,14 +8,16 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class AchievementResponse {
+    private Long id;
     private String Title;
     private String Url;
-    private LocalDateTime achievedAt;  // 업적 날짜 타입에 맞게
+    private LocalDateTime achieved_at;  // 업적 날짜 타입에 맞게
 
-    public AchievementResponse(String Title, String Url, LocalDateTime achievedAt) {
+    public AchievementResponse(Long id, String Title, String Url, LocalDateTime achievedAt) {
+        this.id = id;
         this.Title = Title;
         this.Url = Url;
-        this.achievedAt = achievedAt;
+        this.achieved_at = achievedAt;
     }
 
     // getters, setters 생략

@@ -7,7 +7,7 @@ function Signup() {
 
     return (
         <div className="login-screen">
-            <h1 className="login-title">회원가입이 필요합니다</h1>
+            <h1 className="login-title">로그인이 필요합니다</h1>
             <div className="login-buttons">
                 <button
                     className="login-btn kakao"
@@ -15,7 +15,7 @@ function Signup() {
                         (window.location.href = "http://localhost:8080/oauth2/authorization/kakao")
                     }
                 >
-                    카카오로 회원가입
+                    카카오로 시작하기
                 </button>
                 <button
                     className="login-btn naver"
@@ -23,7 +23,7 @@ function Signup() {
                         (window.location.href = "http://localhost:8080/oauth2/authorization/naver")
                     }
                 >
-                    네이버로 회원가입
+                    네이버로 시작하기
                 </button>
                 <button
                     className="login-btn google"
@@ -31,7 +31,7 @@ function Signup() {
                         (window.location.href = "http://localhost:8080/oauth2/authorization/google")
                     }
                 >
-                    구글로 회원가입
+                    구글로 시작하기
                 </button>
             </div>
         </div>
