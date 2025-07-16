@@ -26,7 +26,12 @@ function Rank() {
 
   return (
     <div className="rank-page">
-      <SideMenu />
+      <div className="top-bar">
+        <SideMenu />
+        <div className="logo">
+          📖 AYEN
+        </div>
+      </div>
       <h2 className="rank-title">🏆 랭킹</h2>
       <p className="rank-subtitle">상위 유저들과 나의 위치를 확인해 보세요!</p>
       <ul className="rank-list">

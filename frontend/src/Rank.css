@@ -9,6 +9,7 @@
 .rank-title {
     font-size: clamp(20px, 5vw, 28px);
     font-weight: bold;
+    margin-top: 20px;
     margin-bottom: 4px;
     text-align: center;
 }
@@ -64,4 +65,20 @@
     color: #666;
     min-width: 70px;
     text-align: right;
+}
+
+.logo {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 24px;
+    font-weight: bold;
+    user-select: none;
+}
+
+.top-bar {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 8px 0;
 }

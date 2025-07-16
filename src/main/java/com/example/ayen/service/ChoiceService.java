@@ -60,9 +60,6 @@ public class ChoiceService {
         int attack = effect.getAttack();
         int defense = effect.getDefense();
         int health = effect.getHealth();
-        int mana = effect.getMana();
-        int intelligence = effect.getIntelligence();
-        int agility = effect.getAgility();
 
         Optional<ScenarioPlay> optionalPlay = scenarioPlayRepository.findById(id);
 
@@ -77,11 +74,8 @@ public class ChoiceService {
                 scenarioPlaystat.setAttack(attack);
                 scenarioPlaystat.setDefense(defense);
                 scenarioPlaystat.setHealth(health);
-                scenarioPlaystat.setMana(mana);
-                scenarioPlaystat.setIntelligence(intelligence);
-                scenarioPlaystat.setAgility(agility);
             } else {
-                scenarioPlaystat = new ScenarioPlayStat(scenarioPlay, attack, defense, health, mana, intelligence, agility);
+                scenarioPlaystat = new ScenarioPlayStat(scenarioPlay, attack, defense, health);
             }
             scenarioPlayStatRepository.save(scenarioPlaystat);
 
@@ -109,9 +103,6 @@ public class ChoiceService {
                 .map(item -> item.getItem().getName())
                 .collect(Collectors.toList());
 
-        System.out.println("사용자의 보유 아이템: " + itemNames);
-        System.out.println("필요한 아이템: " + requiredItemName);
-
         return itemNames.stream()
                 .anyMatch(name -> name.trim().equalsIgnoreCase(requiredItemName.trim()));
 
@@ -125,7 +116,7 @@ public class ChoiceService {
         Scene currentScene = sceneRepository.findById(currentSceneId)
                 .orElseThrow(() -> new RuntimeException("Scene not found"));
 
-        ScenarioPlayStat scenarioPlayStat = scenarioPlayStatRepository.findByScenarioPlay_Id(id)
+        ScenarioPlayStat scenarioPlayStat = scenarioPlayStatRepository.findByScenarioPlayId(id)
                 .orElseThrow(() -> new RuntimeException("ScenarioPlayStat not found"));
 
         scenarioPlayStat = setStats(scenarioPlayStat, stats);
@@ -223,30 +214,65 @@ public class ChoiceService {
         Boss boss = bossRepository.findByScenarioId(scenario.getId())
                 .orElseThrow(() -> new RuntimeException("Boss not found"));
 
-        int ppower = stat.getAttack() + stat.getAgility() + stat.getIntelligence();
-        int pdefense = stat.getDefense();
-        int phealth = stat.getHealth();
-
-        int bpower = boss.getAttack();
-        int bdefense = boss.getDefense();
+        int battack = boss.getAttack();
+        int bdefence = boss.getDefense();
         int bhealth = boss.getHealth();
 
-        int playerAttack = Math.max(1, ppower - bdefense);
-        int bossAttack = Math.max(1, bpower - pdefense);
+        Long scenarioId = scenario.getId();
+        if(scenarioId == 1){
+            int pattack = stat.getAttack();
+            int pdefence = stat.getDefense();
+            int phealth = stat.getHealth();
 
-        int playerTurns = phealth / bossAttack;
-        int bossTurns = bhealth / playerAttack;
+            int bossTurns = phealth / (battack - pdefence);
+            int playerTurns = bhealth / (pattack - bdefence);
 
-        if (bossTurns < playerTurns) {
-            return sceneRepository.findByScenarioAndContent(scenario, "해피엔딩")
-                    .orElseThrow(() -> new RuntimeException("해피엔딩 없음"));
-        } else if (bossTurns == playerTurns) {
-            return sceneRepository.findByScenarioAndContent(scenario, "노말엔딩")
-                    .orElseThrow(() -> new RuntimeException("노말엔딩 없음"));
-        } else {
-            return sceneRepository.findByScenarioAndContent(scenario, "배드엔딩")
-                    .orElseThrow(() -> new RuntimeException("배드엔딩 없음"));
+            if (bossTurns > playerTurns) {
+                return sceneRepository.findByScenarioAndContent(scenario, "해피엔딩")
+                        .orElseThrow(() -> new RuntimeException("해피엔딩 없음"));
+            } else if (bossTurns == playerTurns) {
+                return sceneRepository.findByScenarioAndContent(scenario, "노말엔딩")
+                        .orElseThrow(() -> new RuntimeException("노말엔딩 없음"));
+            } else {
+                return sceneRepository.findByScenarioAndContent(scenario, "배드엔딩")
+                        .orElseThrow(() -> new RuntimeException("배드엔딩 없음"));
+            }
         }
+        else if(scenarioId == 2){
+            int power = stat.getAttack();
+            int morality = stat.getDefense();
+            int health = stat.getHealth();
+
+            int bossTurns = health / battack;
+            int playerTurns = bhealth / power;
+
+            List<ScenarioItem> items = scenarioItemRepository.findByScenarioPlayId(playId);
+            List<String> itemNames = items.stream()
+                    .map(item -> item.getItem().getName())
+                    .collect(Collectors.toList());
+
+            if (bossTurns > playerTurns) {
+                return sceneRepository.findByScenarioAndContent(scenario, "해피엔딩")
+                        .orElseThrow(() -> new RuntimeException("해피엔딩 없음"));
+            }
+            else if(itemNames.contains("과거의 기억") && itemNames.contains("용서의 힘") && morality >= 40){
+                return sceneRepository.findByScenarioAndContent(scenario, "히든엔딩")
+                        .orElseThrow(() -> new RuntimeException("히든엔딩 없음"));
+            }
+            else if(itemNames.contains("진실의 조각") && itemNames.contains("미래의 편린") && power + morality + health >= 120){
+                return sceneRepository.findByScenarioAndContent(scenario, "진엔딩")
+                        .orElseThrow(() -> new RuntimeException("진엔딩 없음"));
+            }
+            else if (bossTurns == playerTurns) {
+                return sceneRepository.findByScenarioAndContent(scenario, "노말엔딩")
+                        .orElseThrow(() -> new RuntimeException("노말엔딩 없음"));
+            }
+            else if (bossTurns < playerTurns) {
+                return sceneRepository.findByScenarioAndContent(scenario, "배드엔딩")
+                        .orElseThrow(() -> new RuntimeException("배드엔딩 없음"));
+            }
+        }
+        return null;
     }
 
     // stat 적용
@@ -254,9 +280,6 @@ public class ChoiceService {
         stat.setAttack(stats.getAttack());
         stat.setDefense(stats.getDefense());
         stat.setHealth(stats.getHealth());
-        stat.setIntelligence(stats.getIntelligence());
-        stat.setMana(stats.getMana());
-        stat.setAgility(stats.getAgility());
 
         return stat;
     }

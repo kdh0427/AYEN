@@ -20,12 +20,8 @@ public class Item {
     @Lob
     private String description;
 
-    @Column(columnDefinition = "json")
-    private String settings;
-
-    public Item(String name, String description, String settings) {
+    public Item(String name, String description) {
         this.name = name;
         this.description = description;
-        this.settings = settings;
     }
 }

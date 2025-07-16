@@ -66,7 +66,12 @@ function User() {
 
   return (
     <div className="user-page-container">
-      <SideMenu />
+      <div className="top-bar">
+        <SideMenu />
+        <div className="logo">
+          📖 AYEN
+        </div>
+      </div>
       <h2 className="profile-title">사용자 정보</h2>
 
       <div className="profile-header">

@@ -21,6 +21,7 @@ public class UserScene {
     private boolean Ending;
     private Long next_scene_id;
     private List<ChoiceDto> choices;  // 씬에 속한 다수의 선택지
+    private StatDto stats;
 
     @Getter
     @Setter
@@ -31,6 +32,7 @@ public class UserScene {
         private String description;
         private String requiredItem;
         private EffectDto effect;      // JSON 컬럼 파싱 결과
+        private StatDto stat;
     }
 
     @Getter
@@ -41,9 +43,6 @@ public class UserScene {
         private Integer attack;
         private Integer defense;
         private Integer health;
-        private Integer mana;
-        private Integer intelligence;
-        private Integer agility;
 
         @JsonDeserialize(using = SingleOrArrayDeserializer.class)
         private List<AddItemDto> addItem;  // ✅ 단일 객체 → List로 변경
@@ -56,5 +55,15 @@ public class UserScene {
     public static class AddItemDto {
         private String name;
         private String description;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class StatDto {
+        private int attack;
+        private int defense;
+        private int health;
     }
 }

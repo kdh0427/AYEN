@@ -95,6 +95,7 @@ html, body {
     font-size: clamp(13px, 2vw, 16px);
     line-height: 1.6;
     margin: 20px 0;
+    text-align: center;
 }
 
 /* 선택지 */
@@ -102,6 +103,7 @@ html, body {
     display: flex;
     flex-direction: column;
     gap: 4px; /* ✅ 세로 간격 좁힘 */
+    text-align: center;
 }
 
 .choice {
@@ -216,4 +218,13 @@ html, body {
         opacity: 0;
         top: -10px;
     }
+}
+
+.logo {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 24px;
+    font-weight: bold;
+    user-select: none;
 }

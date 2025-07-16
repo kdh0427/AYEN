@@ -1,6 +1,7 @@
 package com.example.ayen.controller;
 
 import com.example.ayen.dto.entity.Scenario;
+import com.example.ayen.dto.entity.User;
 import com.example.ayen.dto.response.ApiResponse;
 import com.example.ayen.dto.response.ChoiceRequest;
 import com.example.ayen.dto.response.UserScene;
@@ -14,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -88,12 +90,31 @@ public class ScenarioController {
         }
     }
 
+    @GetMapping("/currentScene")
+    public ResponseEntity<?> getCurrentScene(@AuthenticationPrincipal User user) {
+        Long sceneId = choiceService.findCurrentSceneIdByUserId(user.getId());
+        return ResponseEntity.ok(Map.of("sceneId", sceneId));
+    }
+
     @GetMapping("/scenarios/{scenarioId}/scenes/{currentId}")
     public ResponseEntity<ApiResponse<UserScene>> getScene(
             @PathVariable Long scenarioId,
-            @PathVariable Long currentId) {
+            @PathVariable Long currentId,
+            Authentication authentication) {
 
-        UserScene userScene = sceneService.getSceneDto(scenarioId, currentId);
+        OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
+        String registrationId = ((OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId();
+        String email = extractEmail(oAuth2User, registrationId);
+
+        if (email == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        Long user_id = userService.findIdByEmail(email);
+        Long id = choiceService.findActiveScenarioPlayIdByUserId(user_id);
+
+        if(scenarioId == 2 && currentId == 1) currentId += 11;
+        UserScene userScene = sceneService.getSceneDto(scenarioId, currentId, id);
         if (userScene == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiResponse<>(404, null));
@@ -164,7 +185,7 @@ public class ScenarioController {
         }
 
         // 첫 시작
-        if(currentSceneId == 1L) {
+        if(currentSceneId == 1L || currentSceneId == 12L) {
             // 직업 선택 시 다른 테이블도 생성 (아이템 이름 리스트 전달)
             choiceService.insertScenarioItemAndScenarioPlayStatIfNotExists(id, stats, itemNames);
         }

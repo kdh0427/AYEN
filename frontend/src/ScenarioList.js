@@ -105,6 +105,9 @@ function ScenarioList({ onMenuClick }) {
         <div className="scenario-page">
             <div className="top-bar">
                 <SideMenu />
+                <div className="logo">
+                    📖 AYEN
+                </div>
             </div>
             <h2 className="scenario-title">시나리오 선택</h2>
             <div className="scenario-grid">

@@ -13,7 +13,4 @@ public interface ScenarioPlayStatRepository extends CrudRepository<ScenarioPlayS
 
     Optional<ScenarioPlayStat> findByScenarioPlay(ScenarioPlay scenarioPlay);
     Optional<ScenarioPlayStat> findByScenarioPlayId(Long id);
-    Optional<ScenarioPlayStat> findByScenarioPlay_Id(Long id);
-
-
 }

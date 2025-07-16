@@ -77,7 +77,12 @@ function RecordList() {
 
     return (
         <div className="achievement-page">
-            <SideMenu />
+            <div className="top-bar">
+                <SideMenu />
+                <div className="logo">
+                    📖 AYEN
+                </div>
+            </div>
 
             <div className="tabs">
                 <div

@@ -9,6 +9,16 @@ body {
     justify-content: flex-start;
     align-items: center;
     padding: 8px 0;
+    border-bottom: 1px solid #333;
+}
+
+.logo {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 24px;
+    font-weight: bold;
+    user-select: none;
 }
 
 .menu-button {
@@ -33,6 +43,7 @@ body {
 .scenario-title {
     font-size: clamp(18px, 4vw, 24px);
     font-weight: bold;
+    margin-top: 20px;
     margin-bottom: 20px;
     text-align: center;
 }
@@ -78,11 +89,13 @@ body {
     font-weight: bold;
     font-size: clamp(14px, 2vw, 18px);
     margin-bottom: 6px;
+    text-align: center;
 }
 
 .scenario-desc {
     font-size: clamp(12px, 1.5vw, 14px);
     color: #555;
+    text-align: center;
 }
 
 .snackbar {
