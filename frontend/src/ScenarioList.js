@@ -15,11 +15,12 @@ function ScenarioList({ onMenuClick }) {
     useEffect(() => {
         const fetchScenarios = async () => {
             try {
-                const res = await fetch("http://localhost:8080/api/scenarios", {
+                const res = await fetch(`${process.env.REACT_APP_API_URL}/api/scenarios`, {
                     method: "GET",
                     credentials: "include", // 쿠키 포함 (세션 유지)
                 });
                 const data = await res.json();
+
                 setScenarios(data);
             } catch (error) {
                 console.error("Error fetching scenarios:", error);
@@ -31,7 +32,7 @@ function ScenarioList({ onMenuClick }) {
 
         const checkAchievements = async () => {
             try {
-                const res = await fetch("http://localhost:8080/achievements/checkAchieve", {
+                const res = await fetch(`${process.env.REACT_APP_API_URL}/achievements/checkAchieve`, {
                     method: "GET",
                     credentials: "include",
                 });
@@ -70,7 +71,7 @@ function ScenarioList({ onMenuClick }) {
       
         try {
           // 템플릿 리터럴을 백틱으로 감싸야 변수 치환됨
-          const response = await fetch(`http://localhost:8080/api/scenarios/${scenarioId}/scenes`, {
+          const response = await fetch(`${process.env.REACT_APP_API_URL}/api/scenarios/${scenarioId}/scenes`, {
             method: "POST",
             credentials: "include",
           });

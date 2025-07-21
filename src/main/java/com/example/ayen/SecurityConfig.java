@@ -39,7 +39,7 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("http://localhost:3000"); // 프론트 주소
+        config.addAllowedOrigin("https://chany.ai.kr"); // 프론트 주소
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);
@@ -49,32 +49,34 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> cors.configurationSource(request -> {
-                    CorsConfiguration configuration = new CorsConfiguration();
-                    configuration.setAllowedOrigins(List.of("http://localhost:3000"));
-                    configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-                    configuration.setAllowedHeaders(List.of("*"));
-                    configuration.setAllowCredentials(true);
-                    return configuration;
-                }))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/error", "/login", "/login/oauth2/**", "/logout").permitAll()
                         .anyRequest().authenticated()
                 )
-                .oauth2Login(oauth2 -> oauth2
-                        .userInfoEndpoint(userInfo -> userInfo
-                                .userService(userService)
-                        )
-                        .defaultSuccessUrl("http://localhost:3000/scenarios", true)
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            if (request.getRequestURI().startsWith("/api/")) {
+                                response.sendError(HttpStatus.UNAUTHORIZED.value(), "Unauthorized");
+                            } else {
+                                response.sendRedirect("/");
+                            }
+                        })
                 )
+                .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/oauth2/authorization/kakao")
+                        .userInfoEndpoint(userInfo -> userInfo.userService(userService))
+                        .defaultSuccessUrl("https://chany.ai.kr/scenarios", true)
+                )
+                .formLogin(form -> form.disable())
                 .logout(logout -> logout
-                        .logoutUrl("/logout")               // 로그아웃 URL
-                        .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler()) // ✅ 변경 핵심 부분
-                        .invalidateHttpSession(true)       // 세션 무효화
-                        .deleteCookies("JSESSIONID")       // 쿠키 삭제
+                        .logoutUrl("/logout")
+                        .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler())
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
                         .permitAll()
                 );
+
         return http.build();
     }
 }

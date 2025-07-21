@@ -162,7 +162,9 @@ public class ScenarioController {
 
         if (items != null) {
             for (ChoiceRequest.Item item : items) {
-                itemNames.add(item.getName());
+                if (item != null && item.getName() != null) {
+                    itemNames.add(item.getName());
+                }
             }
         }
 

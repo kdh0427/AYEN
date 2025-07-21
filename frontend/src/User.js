@@ -7,7 +7,7 @@ function User() {
   const maxExp = 1500;
 
   useEffect(() => {
-    fetch("http://localhost:8080/users/my", {
+    fetch(`${process.env.REACT_APP_API_URL}/users/my`, {
       method: "GET",
       credentials: "include",
     })
@@ -26,28 +26,55 @@ function User() {
   }
 
   const handleLogout = () => {
-    const csrfToken = getCookie("XSRF-TOKEN");
-    fetch("http://localhost:8080/logout", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        "X-XSRF-TOKEN": csrfToken,
-      },
-      credentials: "include",
-    })
-      .then((response) => {
+    if (!user) return;
+
+    // 공통 서버 로그아웃 요청
+    const serverLogout = () => {
+      return fetch(`${process.env.REACT_APP_API_URL}/logout`, {
+        method: "POST",
+        credentials: "include",
+      })
+    };
+
+    if (user.social_type === "kakao") {
+      serverLogout().then(response => {
         if (response.ok) {
           const clientId = "12ac0203c0f8bfb6661fcf181d95eefd"; // 카카오 REST API 키
-          const redirectUri = encodeURIComponent("http://localhost:3000"); // 로그아웃 후 리디렉트
+          const redirectUri = encodeURIComponent(`${process.env.REACT_APP_API_URL2}`); // 로그아웃 후 리디렉트 URL
           window.location.href = `https://kauth.kakao.com/oauth/logout?client_id=${clientId}&logout_redirect_uri=${redirectUri}`;
         } else {
           alert("로그아웃 실패");
         }
-      })
-      .catch((err) => {
-        console.error(err);
-        alert("네트워크 오류");
-      });
+      }).catch(() => alert("네트워크 오류"));
+
+    } else if (user.social_type === "google") {
+      // 구글 로그아웃 처리
+      if (window.gapi) {
+        const auth2 = window.gapi.auth2.getAuthInstance();
+        if (auth2) {
+          auth2.signOut().then(() => {
+            serverLogout().then(response => {
+              if (response.ok) {
+                window.location.href = "/"; // 구글 로그아웃 후 리다이렉트
+              } else {
+                alert("로그아웃 실패");
+              }
+            });
+          });
+        }
+      } else {
+        alert("Google API not loaded.");
+      }
+    }else {
+      // 일반 로그아웃 (예: 자체 회원가입 사용자)
+      serverLogout().then(response => {
+        if (response.ok) {
+          window.location.href = "/";
+        } else {
+          alert("로그아웃 실패");
+        }
+      }).catch(() => alert("네트워크 오류"));
+    }
   };
 
   // ⚡ 로딩 전엔 로딩 메시지를 띄워서 user가 null일 때 접근되지 않도록 함

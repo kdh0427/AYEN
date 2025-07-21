@@ -27,7 +27,7 @@ function Story() {
   useEffect(() => {
     setLoading(true);
     fetch(
-      `http://localhost:8080/api/scenarios/${scenarioId}/scenes/${numericSceneId}`,
+      `${process.env.REACT_APP_API_URL}/api/scenarios/${scenarioId}/scenes/${numericSceneId}`,
       {
         method: "GET",
         credentials: "include",
@@ -38,7 +38,6 @@ function Story() {
         if (res.code === 200) {
           const { data } = res;
           setSceneData(data);
-          console.log(data.stats);
           setCurrentStats((prev) => ({ ...prev, ...data.stats }));
           setCurrentItems((prev) => [...prev, ...(data.items || [])]);
         }
@@ -117,7 +116,7 @@ function Story() {
     // 서버에 시작 정보 등록
     if (numericSceneId === 1) {
       await fetch(
-        `http://localhost:8080/api/scenarios/${scenarioId}/scenes/${numericSceneId}`,
+        `${process.env.REACT_APP_API_URL}/api/scenarios/${scenarioId}/scenes/${numericSceneId}`,
         {
           method: "POST",
           credentials: "include",
@@ -140,7 +139,7 @@ function Story() {
     }
 
     try {
-      const response = await fetch("http://localhost:8080/api/itemCheck", {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/itemCheck`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -182,7 +181,7 @@ function Story() {
     setCurrentStats(newStats);
     setCurrentItems(newItems);
 
-    await fetch("http://localhost:8080/api/choose", {
+    await fetch(`${process.env.REACT_APP_API_URL}/api/choose`, {
       method: "POST",
       credentials: "include",
       headers: {
@@ -195,7 +194,7 @@ function Story() {
     });
 
     const updatedScene = await fetch(
-      `http://localhost:8080/api/scenarios/${scenarioId}/scenes/${numericSceneId}`,
+      `${process.env.REACT_APP_API_URL}/api/scenarios/${scenarioId}/scenes/${numericSceneId}`,
       {
         method: "GET",
         credentials: "include",
@@ -209,11 +208,6 @@ function Story() {
     );
     const nextSceneId = updatedChoice?.nextSceneId ?? choice.nextSceneId;
 
-    if (scenarioId === "2" && numericSceneId === 1) {
-      navigate(`/scenarios/2/scenes/13`);
-      return;
-    }
-    
     if (nextSceneId === 1) {
       navigate("/scenarios"); // 메인 화면 경로로 변경
       return; // 더 이상 진행하지 않도록 return
@@ -232,6 +226,18 @@ function Story() {
 
   const { content, imageUrl, choices } = sceneData;
 
+  const statusKeys = scenarioId === "2"
+  ? [
+      { icon: "🗡️", label: "공격력", key: "attack" },
+      { icon: "🧠", label: "지혜", key: "defense" },
+      { icon: "⚖️", label: "도덕성", key: "health" },
+    ]
+  : [
+      { icon: "🗡️", label: "공격력", key: "attack" },
+      { icon: "🛡️", label: "방어력", key: "defense" },
+      { icon: "❤️", label: "체력", key: "health" },
+    ];
+
   return (
     <div className="container">
       <div className="top-bar">
@@ -240,21 +246,15 @@ function Story() {
       </div>
       <div className="status-bar-wrapper">
         <div className="status-bar">
-          {[
-            { icon: "🗡️", label: "공격력", key: "attack" },
-            { icon: "🛡️", label: "방어력", key: "defense" },
-            { icon: "❤️", label: "체력", key: "health" },
-          ].map(({ icon, label, key }) => (
+          {statusKeys.map(({ icon, label, key }) => (
             <div className="status-item" key={key}>
               <div>{icon}</div>
               <div>{label}</div>
               <div className="stat-value">
-                {currentStats[key]}
+                {currentStats[key] || 0}
                 {statChanges[key] ? (
                   <span
-                    className={`stat-change ${
-                      statChanges[key] > 0 ? "up" : "down"
-                    }`}
+                    className={`stat-change ${statChanges[key] > 0 ? "up" : "down"}`}
                   >
                     {statChanges[key] > 0
                       ? `+${statChanges[key]}`

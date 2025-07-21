@@ -206,72 +206,72 @@ public class ChoiceService {
         }
     }
 
-    // 결말 분기
-    public Scene conditionBranch(Long playId, Scenario scenario) {
-        ScenarioPlayStat stat = scenarioPlayStatRepository.findByScenarioPlayId(playId)
-                .orElseThrow(() -> new RuntimeException("Stat not found"));
-
-        Boss boss = bossRepository.findByScenarioId(scenario.getId())
-                .orElseThrow(() -> new RuntimeException("Boss not found"));
-
-        int battack = boss.getAttack();
-        int bdefence = boss.getDefense();
-        int bhealth = boss.getHealth();
-
-        Long scenarioId = scenario.getId();
-        if(scenarioId == 1){
-            int pattack = stat.getAttack();
-            int pdefence = stat.getDefense();
-            int phealth = stat.getHealth();
-
-            int bossTurns = phealth / (battack - pdefence);
-            int playerTurns = bhealth / (pattack - bdefence);
-
-            if (bossTurns > playerTurns) {
-                return sceneRepository.findByScenarioAndContent(scenario, "해피엔딩")
-                        .orElseThrow(() -> new RuntimeException("해피엔딩 없음"));
-            } else if (bossTurns == playerTurns) {
-                return sceneRepository.findByScenarioAndContent(scenario, "노말엔딩")
-                        .orElseThrow(() -> new RuntimeException("노말엔딩 없음"));
-            } else {
-                return sceneRepository.findByScenarioAndContent(scenario, "배드엔딩")
-                        .orElseThrow(() -> new RuntimeException("배드엔딩 없음"));
+        // 결말 분기
+        public Scene conditionBranch(Long playId, Scenario scenario) {
+            ScenarioPlayStat stat = scenarioPlayStatRepository.findByScenarioPlayId(playId)
+                    .orElseThrow(() -> new RuntimeException("Stat not found"));
+    
+            Boss boss = bossRepository.findByScenarioId(scenario.getId())
+                    .orElseThrow(() -> new RuntimeException("Boss not found"));
+    
+            int battack = boss.getAttack();
+            int bdefence = boss.getDefense();
+            int bhealth = boss.getHealth();
+    
+            Long scenarioId = scenario.getId();
+            if(scenarioId == 1){
+                int pattack = stat.getAttack();
+                int pdefence = stat.getDefense();
+                int phealth = stat.getHealth();
+    
+                int bossTurns = phealth / (battack - pdefence);
+                int playerTurns = bhealth / (pattack - bdefence);
+    
+                if (bossTurns > playerTurns) {
+                    return sceneRepository.findByScenarioAndContent(scenario, "해피엔딩")
+                            .orElseThrow(() -> new RuntimeException("해피엔딩 없음"));
+                } else if (bossTurns == playerTurns) {
+                    return sceneRepository.findByScenarioAndContent(scenario, "노말엔딩")
+                            .orElseThrow(() -> new RuntimeException("노말엔딩 없음"));
+                } else {
+                    return sceneRepository.findByScenarioAndContent(scenario, "배드엔딩")
+                            .orElseThrow(() -> new RuntimeException("배드엔딩 없음"));
+                }
             }
-        }
-        else if(scenarioId == 2){
-            int power = stat.getAttack();
-            int morality = stat.getDefense();
-            int health = stat.getHealth();
+            else if(scenarioId == 2){
+                int power = stat.getAttack();
+                int morality = stat.getDefense();
+                int health = stat.getHealth();
+    
+                int bossTurns = health / battack;
+                int playerTurns = bhealth / power;
+    
+                List<ScenarioItem> items = scenarioItemRepository.findByScenarioPlayId(playId);
+                List<String> itemNames = items.stream()
+                        .map(item -> item.getItem().getName())
+                        .collect(Collectors.toList());
 
-            int bossTurns = health / battack;
-            int playerTurns = bhealth / power;
-
-            List<ScenarioItem> items = scenarioItemRepository.findByScenarioPlayId(playId);
-            List<String> itemNames = items.stream()
-                    .map(item -> item.getItem().getName())
-                    .collect(Collectors.toList());
-
-            if (bossTurns > playerTurns) {
-                return sceneRepository.findByScenarioAndContent(scenario, "해피엔딩")
-                        .orElseThrow(() -> new RuntimeException("해피엔딩 없음"));
+                if(itemNames.contains("진실의 조각") && itemNames.contains("용서의 힘") && power + morality + health >= 120){
+                    return sceneRepository.findByScenarioAndContent(scenario, "진엔딩")
+                            .orElseThrow(() -> new RuntimeException("진엔딩 없음"));
+                }
+                else if(itemNames.contains("과거의 기억") && itemNames.contains("용서의 힘") && morality >= 40){
+                    return sceneRepository.findByScenarioAndContent(scenario, "히든엔딩")
+                            .orElseThrow(() -> new RuntimeException("히든엔딩 없음"));
+                }
+                else if (bossTurns > playerTurns) {
+                    return sceneRepository.findByScenarioAndContent(scenario, "해피엔딩")
+                            .orElseThrow(() -> new RuntimeException("해피엔딩 없음"));
+                }
+                else if (bossTurns == playerTurns) {
+                    return sceneRepository.findByScenarioAndContent(scenario, "노말엔딩")
+                            .orElseThrow(() -> new RuntimeException("노말엔딩 없음"));
+                }
+                else if (bossTurns < playerTurns) {
+                    return sceneRepository.findByScenarioAndContent(scenario, "배드엔딩")
+                            .orElseThrow(() -> new RuntimeException("배드엔딩 없음"));
+                }
             }
-            else if(itemNames.contains("과거의 기억") && itemNames.contains("용서의 힘") && morality >= 40){
-                return sceneRepository.findByScenarioAndContent(scenario, "히든엔딩")
-                        .orElseThrow(() -> new RuntimeException("히든엔딩 없음"));
-            }
-            else if(itemNames.contains("진실의 조각") && itemNames.contains("미래의 편린") && power + morality + health >= 120){
-                return sceneRepository.findByScenarioAndContent(scenario, "진엔딩")
-                        .orElseThrow(() -> new RuntimeException("진엔딩 없음"));
-            }
-            else if (bossTurns == playerTurns) {
-                return sceneRepository.findByScenarioAndContent(scenario, "노말엔딩")
-                        .orElseThrow(() -> new RuntimeException("노말엔딩 없음"));
-            }
-            else if (bossTurns < playerTurns) {
-                return sceneRepository.findByScenarioAndContent(scenario, "배드엔딩")
-                        .orElseThrow(() -> new RuntimeException("배드엔딩 없음"));
-            }
-        }
         return null;
     }
 

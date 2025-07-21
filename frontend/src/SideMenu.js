@@ -11,7 +11,7 @@ function SideMenu() {
     /*const level = 12;
     const nickname = "모험가";*/
     useEffect(() => {
-        fetch("http://localhost:8080/users/profile", {
+        fetch(`${process.env.REACT_APP_API_URL}/users/profile`, {
           method: "GET",
           credentials: "include",
         })

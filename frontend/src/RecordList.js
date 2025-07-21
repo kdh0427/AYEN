@@ -14,7 +14,7 @@ function RecordList() {
 
     useEffect(() => {
         setLoading(true);
-        const endpoint = activeTab === "업적" ? "http://localhost:8080/achievements/me" : "http://localhost:8080/endings/me";
+        const endpoint = activeTab === "업적" ? `${process.env.REACT_APP_API_URL}/achievements/me` : `${process.env.REACT_APP_API_URL}/endings/me`;
 
         fetch(endpoint, { credentials: "include" })
             .then((res) => res.json())
@@ -50,8 +50,8 @@ function RecordList() {
     const handleClick = async (item) => {
         try {
             const endpoint = activeTab === "업적"
-                ? `http://localhost:8080/achievements/detail/${item.id}`
-                : `http://localhost:8080/endings/detail/${item.id}`;
+                ? `${process.env.REACT_APP_API_URL}/achievements/detail/${item.id}`
+                : `${process.env.REACT_APP_API_URL}/endings/detail/${item.id}`;
 
             const res = await fetch(endpoint, {
                 method: "GET",

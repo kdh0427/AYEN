@@ -7,7 +7,7 @@ function Rank() {
   const [currentUserId, setCurrentUserId] = useState(null); // 로그인 유저 ID 상태 추가
 
   useEffect(() => {
-    fetch("http://localhost:8080/users/rankings", {
+    fetch(`${process.env.REACT_APP_API_URL}/users/rankings`, {
       method: "GET",
       credentials: "include",
     })
